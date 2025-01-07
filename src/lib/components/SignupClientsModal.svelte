@@ -21,12 +21,21 @@
 
   // close modal when clicking outside the modal
   const handleClose = () => {
+    clearForm();
     closeModal();
+  };
+
+  const clearForm = () => {
+    email = '';
+    password = '';
+    confirmPassword = '';
+    name = '';
   };
 
   const handleOutsideClick = (event) => {
     const modalContent = event.target.closest('.modal-content');
     if (!modalContent) {
+      clearForm();
       closeModal();
     }
   };
@@ -39,11 +48,14 @@
   function validate() {
     errors = {
       email: validateEmail(email) ? '' : 'Invalid email format',
-      password: validatePassword(password) ? '' : 'Password must be at least 8 characters long and contain 1 uppercase, 1 lowercase, and 1 special character',
-      confirmPassword: password === confirmPassword ? '' : 'Passwords do not match',
+      password: validatePassword(password)
+        ? ''
+        : 'Password must be at least 8 characters long and contain 1 uppercase, 1 lowercase, and 1 special character',
+      confirmPassword:
+        password === confirmPassword ? '' : 'Passwords do not match',
       name: name.trim() ? '' : 'Name is required',
     };
-    return Object.values(errors).every(error => error === ''); // Form is valid if there are no errors
+    return Object.values(errors).every((error) => error === ''); // Form is valid if there are no errors
   }
 
   function validateEmail(email) {
@@ -53,7 +65,8 @@
 
   function validatePassword(password) {
     // password must be at least 8 characters long, with at least 1 uppercase letter, 1 lowercase letter, and 1 special character
-    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    const re =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return re.test(password);
   }
 
@@ -65,17 +78,23 @@
       const response = await fetch('/api/create-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: hashedPassword, name, role: 'client' }),
+        body: JSON.stringify({
+          email,
+          password: hashedPassword,
+          name,
+          role: 'client',
+        }),
       });
 
       if (response.ok) {
         alert('User created successfully');
+        clearForm();
         closeModal();
       } else {
         alert('Failed to create user');
       }
     } else {
-      console.log("Form contains errors");
+      console.log('Form contains errors');
     }
   }
 </script>
@@ -84,8 +103,7 @@
   <div
     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center"
     on:click={handleOutsideClick}
-    on:keydown={(e) =>
-       e.key === 'Escape' ? handleClose() : null}
+    on:keydown={(e) => (e.key === 'Escape' ? handleClose() : null)}
     aria-label="Close modal"
     role="button"
     tabindex="0"
@@ -102,7 +120,9 @@
 
       <form on:submit={handleSubmit}>
         <div class="mb-4">
-          <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+          <label for="name" class="block text-sm font-medium text-gray-700"
+            >Name</label
+          >
           <input
             type="text"
             id="name"
@@ -116,7 +136,9 @@
         </div>
 
         <div class="mb-4">
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <label for="email" class="block text-sm font-medium text-gray-700"
+            >Email</label
+          >
           <input
             type="email"
             id="email"
@@ -130,7 +152,9 @@
         </div>
 
         <div class="mb-4">
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <label for="password" class="block text-sm font-medium text-gray-700"
+            >Password</label
+          >
           <input
             type="password"
             id="password"
@@ -144,7 +168,11 @@
         </div>
 
         <div class="mb-4">
-          <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <label
+            for="confirmPassword"
+            class="block text-sm font-medium text-gray-700"
+            >Confirm Password</label
+          >
           <input
             type="password"
             id="confirmPassword"
