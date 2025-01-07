@@ -1,7 +1,11 @@
 <script>
+  import bcrypt from 'bcryptjs';
+
   export let showModal = false;
   export let closeModal = () => {};
   export let title = 'Modal Title';
+
+  const saltRounds = 10; //for bcrypt
 
   let email = '';
   let password = '';
@@ -19,12 +23,18 @@
     }
   };
 
+  async function hashPassword(password) {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
+    const hashedPassword = await hashPassword(password);
     const response = await fetch('/api/create-user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, name, role: 'client' }),
+      body: JSON.stringify({ email, password: hashedPassword, name, role: 'client' }),
     });
 
     if (response.ok) {
