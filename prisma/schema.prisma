@@ -22,4 +22,12 @@ model users {
   role          String   // 'therapist' or 'client'
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  clients       clients?
+}
+
+model clients {
+  id          Int      @id @default(autoincrement())
+  user        users    @relation(fields: [userId], references: [id])
+  userId      Int      @unique
+  preferences Json?
 }
