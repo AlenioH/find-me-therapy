@@ -85,7 +85,7 @@
     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center"
     on:click={handleOutsideClick}
     on:keydown={(e) =>
-      e.key === 'Enter' || e.key === ' ' ? handleClose() : null}
+       e.key === 'Escape' ? handleClose() : null}
     aria-label="Close modal"
     role="button"
     tabindex="0"
