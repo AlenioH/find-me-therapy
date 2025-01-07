@@ -8,45 +8,7 @@
     // redirect to search-results page with dummy query results
     goto('/search-results', { state: { data: dummyResults } });
   };
-
-  let email = '';
-  let password = '';
-  let name = '';
-  let role = 'client';
-
-  async function handleSubmit() {
-    const response = await fetch('/api/create-user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, name, role }),
-    });
-
-    if (response.ok) {
-      alert('User created successfully');
-    } else {
-      alert('Failed to create user');
-    }
-  }
 </script>
-
-<form on:submit|preventDefault={handleSubmit}>
-  <label for="email">Email</label>
-  <input type="email" id="email" bind:value={email} required />
-
-  <label for="password">Password</label>
-  <input type="password" id="password" bind:value={password} required />
-
-  <label for="name">Name</label>
-  <input type="text" id="name" bind:value={name} required />
-
-  <label for="role">Role</label>
-  <select id="role" bind:value={role}>
-    <option value="client">Client</option>
-    <option value="therapist">Therapist</option>
-  </select>
-
-  <button type="submit">Register</button>
-</form>
 
 <!-- CAT section -->
 <section class="bg-orange-500 text-white py-12 text-center">
