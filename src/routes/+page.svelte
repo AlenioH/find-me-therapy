@@ -43,4 +43,11 @@
       Suchen
     </button>
   </div>
+  <hr class="my-10" />
+  <a
+    href="/therapist-signup"
+    class="bg-orange-500 text-white font-bold py-3 px-6 rounded hover:bg-orange-400"
+  >
+    Anmelden als Therapeut:in
+  </a>
 </section>
