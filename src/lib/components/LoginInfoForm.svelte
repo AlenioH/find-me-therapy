@@ -1,14 +1,7 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import bcrypt from 'bcryptjs';
-
-  export let buttonText = "";
+  export let buttonText = '';
   export let handleSubmit;
   export let userInfo;
-
-  const dispatch = createEventDispatcher();
-
-  const saltRounds = 10; //for bcrypt
 
   /**
    * @type {HTMLFormElement}
@@ -26,11 +19,6 @@
     form.reset();
   };
 
-  const hashPassword = async (password) => {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
-  };
-
   const validate = () => {
     errors = {
       email: validateEmail(userInfo.email) ? '' : 'Invalid email format',
@@ -38,7 +26,9 @@
         ? ''
         : 'Password must be at least 8 characters long and contain 1 uppercase, 1 lowercase, and 1 special character',
       confirmPassword:
-        userInfo.password === userInfo.confirmPassword ? '' : 'Passwords do not match',
+        userInfo.password === userInfo.confirmPassword
+          ? ''
+          : 'Passwords do not match',
       name: userInfo.name.trim() ? '' : 'Name is required',
     };
     return Object.values(errors).every((error) => error === ''); // Form is valid if there are no errors
@@ -56,8 +46,8 @@
     return re.test(password);
   };
 
-   // Expose the validation method to the parent
-   export const triggerValidation = () => {
+  //expose the validation method to the parent
+  export const triggerValidation = async () => {
     return validate();
   };
 </script>

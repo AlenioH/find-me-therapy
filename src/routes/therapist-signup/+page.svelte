@@ -1,6 +1,8 @@
 <script>
+  import bcrypt from 'bcryptjs';
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
 
+  const saltRounds = 10; //for bcrypt
   let currentStep = 1;
 
   // @ts-ignore
@@ -20,6 +22,7 @@
   };
 
   const nextStep = () => {
+    console.log('user', userInfo);
     if (currentStep === 1) {
       // @ts-ignore
       const isValid = formComponent.triggerValidation();
@@ -33,9 +36,14 @@
     currentStep = currentStep > 1 ? currentStep - 1 : currentStep;
   };
 
-  const handleSubmit = () => {
+  const hashPassword = async (password) => {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+  };
+
+  const handleSubmit = async () => {
+    userInfo.password = await hashPassword(userInfo.password);
     console.log('User info:', userInfo);
-    // dispatch('formSubmitted', userInfo); // Dispatch the submitted data to parent component
   };
 </script>
 
