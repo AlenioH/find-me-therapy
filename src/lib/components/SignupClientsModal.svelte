@@ -7,6 +7,11 @@
 
   const saltRounds = 10; //for bcrypt
 
+  /**
+   * @type {HTMLFormElement}
+   */
+  let form;
+
   let email = '';
   let password = '';
   let confirmPassword = '';
@@ -26,10 +31,7 @@
   };
 
   const clearForm = () => {
-    email = '';
-    password = '';
-    confirmPassword = '';
-    name = '';
+    form.reset();
   };
 
   const handleOutsideClick = (event) => {
@@ -40,12 +42,12 @@
     }
   };
 
-  const hashPassword =  async (password) => {
+  const hashPassword = async (password) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     return hashedPassword;
-  }
+  };
 
- const validate = () => {
+  const validate = () => {
     errors = {
       email: validateEmail(email) ? '' : 'Invalid email format',
       password: validatePassword(password)
@@ -56,19 +58,19 @@
       name: name.trim() ? '' : 'Name is required',
     };
     return Object.values(errors).every((error) => error === ''); // Form is valid if there are no errors
-  }
+  };
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-  }
+  };
 
   const validatePassword = (password) => {
     // password must be at least 8 characters long, with at least 1 uppercase letter, 1 lowercase letter, and 1 special character
     const re =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return re.test(password);
-  }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -96,7 +98,7 @@
     } else {
       console.log('Form contains errors');
     }
-  }
+  };
 </script>
 
 {#if showModal}
@@ -118,7 +120,7 @@
 
       <h2 class="text-2xl font-bold mb-4 text-center">{title}</h2>
 
-      <form id="registration-form" on:submit={handleSubmit}>
+      <form bind:this={form} on:submit={handleSubmit}>
         <div class="mb-4">
           <label for="name" class="block text-sm font-medium text-gray-700"
             >Name</label
