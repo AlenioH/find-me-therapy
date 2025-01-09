@@ -2,21 +2,14 @@
   export let buttonText = '';
   export let handleSubmit;
   export let userInfo;
-
-  /**
-   * @type {HTMLFormElement}
-   */
-  let form;
+  // @ts-ignore
+  let formElement;
 
   let errors = {
     email: '',
     password: '',
     confirmPassword: '',
     name: '',
-  };
-
-  const clearForm = () => {
-    form.reset();
   };
 
   const validate = () => {
@@ -47,12 +40,18 @@
   };
 
   //expose the validation method to the parent
-  export const triggerValidation = async () => {
+  export const triggerValidation = () => {
     return validate();
   };
+
+  //expose the reset method to the parent
+  export const triggerReset = () => {
+    // @ts-ignore
+    formElement.reset()
+  }
 </script>
 
-<form bind:this={form} on:submit={handleSubmit}>
+<form bind:this={formElement} on:submit={handleSubmit}>
   <div class="mb-4">
     <label for="name" class="block text-sm font-medium text-gray-700"
       >Name</label
