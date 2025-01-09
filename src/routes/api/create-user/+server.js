@@ -63,6 +63,15 @@ export async function POST({ request }) {
         },
       });
       console.log(therapist);
+
+      const approval = await prisma.adminApprovals.create({
+        data: {
+          therapistId: therapist.id,
+          type: 'new_profile',
+          status: 'pending',
+        },
+      });
+      console.log('approval', approval);
     }
 
     return new Response(JSON.stringify(newUser), { status: 201 });
