@@ -47,8 +47,8 @@
   //expose the reset method to the parent
   export const triggerReset = () => {
     // @ts-ignore
-    formElement.reset()
-  }
+    formElement.reset();
+  };
 </script>
 
 <form bind:this={formElement} on:submit={handleSubmit}>
@@ -116,14 +116,13 @@
     {/if}
   </div>
 
-  {#if buttonText !== ''}
-    <div class="text-center mt-4">
-      <button
-        type="submit"
-        class="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400"
-      >
-        {buttonText}
-      </button>
-    </div>
-  {/if}
+  <div class="text-center mt-4">
+    <button
+      type="submit"
+      class="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400"
+      class:invisible={buttonText === ''}
+    >
+      {buttonText}
+    </button>
+  </div>
 </form>
