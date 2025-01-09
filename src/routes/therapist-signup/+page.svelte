@@ -8,6 +8,11 @@
   // @ts-ignore
   let formComponent;
 
+  /**
+   * @type {HTMLFormElement}
+   */
+  let form;
+
   let userInfo = {
     name: '',
     email: '',
@@ -23,6 +28,10 @@
 
   const nextStep = async (e) => {
     e.preventDefault();
+    //validate form inputs
+    if (form && !form.reportValidity()) {
+      return;
+    }
     console.log('user', userInfo);
     if (currentStep === 1) {
       // @ts-ignore
@@ -63,7 +72,7 @@
 
     {#if currentStep === 2}
       <h3 class="text-2xl font-bold mb-6">Schritt 2: Mehr Information</h3>
-      <form class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
+      <form bind:this={form} class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
         <select
           bind:value={userInfo.gender}
           required
@@ -79,6 +88,7 @@
           placeholder="Bio"
           bind:value={userInfo.bio}
           class="border w-full p-2 mt-4 rounded-md"
+          required
         ></textarea>
         <input
           type="text"
@@ -92,7 +102,7 @@
 
     {#if currentStep === 3}
       <h3 class="text-2xl font-bold mb-6">Schritt 3: Upload Files</h3>
-      <form class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
+      <form bind:this={form} class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
         <input
           type="file"
           class="border w-full p-2 mt-4 rounded-md"
