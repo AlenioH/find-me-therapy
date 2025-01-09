@@ -1,5 +1,5 @@
 <script>
-  import { goto } from '@sveltejs/kit';
+  import { goto } from '$app/navigation';
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
   import bcrypt from 'bcryptjs';
 
