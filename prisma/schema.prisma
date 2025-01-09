@@ -50,8 +50,31 @@ model therapists {
   profileVideo            String?
   qualificationsPdf       String
   birthdate               DateTime
+  adminApprovals  adminApprovals[]
 }
 
+model adminApprovals {
+  id            Int       @id @default(autoincrement())
+  therapistId   Int       // Foreign key referencing therapists.id
+  therapist     therapists @relation(fields: [therapistId], references: [id])
+  type          ApprovalType
+  status        ApprovalStatus @default(pending)
+  adminNotes    String?
+  createdAt     DateTime  @default(now())
+
+  @@map("admin_approvals")
+}
+
+enum ApprovalType {
+  new_profile
+  update
+}
+
+enum ApprovalStatus {
+  pending
+  approved
+  rejected
+}
 
 enum Gender {
   male
