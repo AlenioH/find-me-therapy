@@ -1,4 +1,5 @@
 <script>
+  import { goto } from '@sveltejs/kit';
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
   import bcrypt from 'bcryptjs';
 
@@ -62,7 +63,6 @@
     } else {
       currentStep = currentStep < 3 ? currentStep + 1 : currentStep;
     }
-    currentStep = currentStep < 3 ? currentStep + 1 : currentStep;
   };
 
   const prevStep = () => {
@@ -75,8 +75,26 @@
   };
 
   const handleSubmit = async () => {
-    userInfo.password = await hashPassword(userInfo.password);
+    const hashedPassword = await hashPassword(userInfo.password);
     console.log('User info:', userInfo);
+    const response = await fetch('/api/create-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...userInfo,
+        // email: userInfo.email,
+        password: hashedPassword,
+        birthdate: new Date(userInfo.birthdate).toISOString(),
+        // name: userInfo.name,
+        role: 'therapist',
+      }),
+    });
+    if (response.ok) {
+      alert('User created successfully');
+      goto('/signup-success');
+    } else {
+      alert('Failed to create user');
+    }
   };
 </script>
 
