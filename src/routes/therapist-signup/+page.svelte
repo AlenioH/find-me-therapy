@@ -1,17 +1,16 @@
 <script>
-  import bcrypt from 'bcryptjs';
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
+  import bcrypt from 'bcryptjs';
 
-  const saltRounds = 10; //for bcrypt
+  const saltRounds = 10; // for bcrypt
   let currentStep = 1;
-
-  // @ts-ignore
-  let formComponent;
 
   /**
    * @type {HTMLFormElement}
    */
   let form;
+  // @ts-ignore
+  let formComponent;
 
   let userInfo = {
     name: '',
@@ -22,9 +21,32 @@
     bio: '',
     address: '',
     languages: [],
+    specialization: [],
+    costPerSession: '',
+    sessionDuration: '',
+    offersFirstConsultation: false,
+    lgbtqFriendly: false,
     profilePicture: '',
+    profileVideo: '',
     qualificationsPdf: '',
+    birthdate: '',
   };
+
+  //TODO: enum/API
+  const languagesOptions = [
+    'English',
+    'Spanish',
+    'French',
+    'German',
+    'Chinese',
+  ];
+  const specializationOptions = [
+    'Cognitive Behavioral Therapy',
+    'Psychoanalysis',
+    'Family Therapy',
+    'Trauma Therapy',
+    'Mindfulness-Based Therapy',
+  ];
 
   const nextStep = async (e) => {
     e.preventDefault();
@@ -40,6 +62,7 @@
     } else {
       currentStep = currentStep < 3 ? currentStep + 1 : currentStep;
     }
+    currentStep = currentStep < 3 ? currentStep + 1 : currentStep;
   };
 
   const prevStep = () => {
@@ -71,8 +94,13 @@
     {/if}
 
     {#if currentStep === 2}
-      <h3 class="text-2xl font-bold mb-6">Schritt 2: Mehr Information</h3>
-      <form bind:this={form} class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
+      <h3 class="text-2xl font-bold mb-6">
+        Schritt 2: Persönliche Information
+      </h3>
+      <form
+        bind:this={form}
+        class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
+      >
         <select
           bind:value={userInfo.gender}
           required
@@ -92,26 +120,101 @@
         ></textarea>
         <input
           type="text"
-          placeholder="Address"
+          autocomplete="street-address"
+          placeholder="Adresse"
           bind:value={userInfo.address}
           class="border w-full p-2 mt-4 rounded-md"
           required
         />
+        <input
+          type="date"
+          bind:value={userInfo.birthdate}
+          class="border w-full p-2 mt-4 rounded-md"
+          required
+        />
+        <select
+          bind:value={userInfo.languages}
+          multiple
+          required
+          class="border w-full p-2 mt-4 rounded-md"
+        >
+          <option value="" disabled>Sprachen auswählen</option>
+          {#each languagesOptions as language}
+            <option value={language}>{language}</option>
+          {/each}
+        </select>
       </form>
     {/if}
 
     {#if currentStep === 3}
-      <h3 class="text-2xl font-bold mb-6">Schritt 3: Upload Files</h3>
-      <form bind:this={form} class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
+      <h3 class="text-2xl font-bold mb-6">Schritt 3: Therapie Information</h3>
+      <form
+        bind:this={form}
+        class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
+      >
+        <select
+          bind:value={userInfo.specialization}
+          multiple
+          required
+          class="border w-full p-2 mt-4 rounded-md"
+        >
+          <option value="" disabled>Spezialisierungen auswählen</option>
+          {#each specializationOptions as specialization}
+            <option value={specialization}>{specialization}</option>
+          {/each}
+        </select>
+        <input
+          type="number"
+          placeholder="Kosten pro Sitzung (€)"
+          bind:value={userInfo.costPerSession}
+          class="border w-full p-2 mt-4 rounded-md"
+          required
+          step="0.01"
+        />
+        <input
+          type="number"
+          placeholder="Dauer der Sitzung (Minuten)"
+          bind:value={userInfo.sessionDuration}
+          class="border w-full p-2 mt-4 rounded-md"
+          required
+        />
+        <label class="block mt-4">
+          <input
+            type="checkbox"
+            bind:checked={userInfo.offersFirstConsultation}
+            class="mr-2"
+          />
+          Bietet eine erste Beratung kostenlos an
+        </label>
+        <label class="block mt-4">
+          <input
+            type="checkbox"
+            bind:checked={userInfo.lgbtqFriendly}
+            class="mr-2"
+          />
+          LGBTQ+ freundlich
+        </label>
         <input
           type="file"
-          class="border w-full p-2 mt-4 rounded-md"
           accept="image/*"
+          placeholder="Profilbild hochladen"
+          bind:value={userInfo.profilePicture}
+          class="border w-full p-2 mt-4 rounded-md"
         />
         <input
           type="file"
+          accept="video/*"
+          placeholder="Profilvideo hochladen"
+          bind:value={userInfo.profileVideo}
           class="border w-full p-2 mt-4 rounded-md"
+        />
+        <input
+          type="file"
           accept=".pdf"
+          placeholder="Qualifikationen (PDF)"
+          bind:value={userInfo.qualificationsPdf}
+          class="border w-full p-2 mt-4 rounded-md"
+          required
         />
       </form>
     {/if}
