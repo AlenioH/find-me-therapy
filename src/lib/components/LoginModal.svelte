@@ -1,6 +1,6 @@
 <script>
-  import bcrypt from 'bcryptjs';
   import LoginInfoForm from './LoginInfoForm.svelte';
+  import { goto } from '$app/navigation';
 
   export let showModal = false;
   export let closeModal = () => {};
@@ -37,37 +37,33 @@
     }
   };
 
-  const hashPassword = async (password) => {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // @ts-ignore
-    if (formComponent.triggerValidation()) {
-      const hashedPassword = await hashPassword(userInfo.password);
-      const response = await fetch('/api/create-user', {
+    try {
+      const response = await fetch('/api/login-therapist', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies in the request
         body: JSON.stringify({
           email: userInfo.email,
-          password: hashedPassword,
-          name: userInfo.name,
-          role: 'client',
+          password: userInfo.password,
         }),
       });
 
-      if (response.ok) {
-        alert('User created successfully');
-        clearForm();
-        closeModal();
-      } else {
-        alert('Failed to create user');
+      closeModal();
+      goto('/therapist-dashboard');
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error);
       }
-    } else {
-      console.log('Form contains errors');
+
+      console.log('Login successful');
+    } catch (error) {
+      console.error('Login failed:', error.message);
     }
   };
 </script>
@@ -95,7 +91,8 @@
         bind:this={formComponent}
         {userInfo}
         {handleSubmit}
-        buttonText="Registrieren"
+        buttonText="Login"
+        formType={'login'}
       />
     </div>
   </div>

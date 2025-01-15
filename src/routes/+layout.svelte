@@ -1,16 +1,13 @@
 <script>
   import '../app.css';
   import { writable } from 'svelte/store';
-  import Modal from '$lib/components/SignupClientsModal.svelte';
+  import Modal from '$lib/components/LoginModal.svelte';
 
   // store to control the visibility of the modals
-  const showRegisterModal = writable(false);
   const showLoginModal = writable(false);
 
   // functions to open and close the modals
-  const openRegisterModal = () => showRegisterModal.set(true);
   const openLoginModal = () => showLoginModal.set(true);
-  const closeRegisterModal = () => showRegisterModal.set(false);
   const closeLoginModal = () => showLoginModal.set(false);
 </script>
 
@@ -37,7 +34,13 @@
           class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
           on:click={openLoginModal}
         >
-          Anmelden
+          Anmelden als Kunde
+        </button>
+        <button
+          class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+          on:click={openLoginModal}
+        >
+          Anmelden als Therapeut:in
         </button>
       </div>
     </div>
@@ -53,12 +56,6 @@
     <p>&copy; 2025 FindMeTherapy. All rights reserved.</p>
   </footer>
 
-  <!-- Modals -->
-  <Modal
-    showModal={$showRegisterModal}
-    closeModal={closeRegisterModal}
-    title="Registrieren"
-  />
   <Modal
     showModal={$showLoginModal}
     closeModal={closeLoginModal}

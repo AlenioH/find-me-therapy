@@ -2,6 +2,7 @@
   export let buttonText = '';
   export let handleSubmit;
   export let userInfo;
+  export let formType;
   // @ts-ignore
   let formElement;
 
@@ -52,21 +53,23 @@
 </script>
 
 <form bind:this={formElement} on:submit={handleSubmit}>
-  <div class="mb-4">
-    <label for="name" class="block text-sm font-medium text-gray-700"
-      >Name</label
-    >
-    <input
-      type="text"
-      id="name"
-      bind:value={userInfo.name}
-      class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500"
-      required
-    />
-    {#if errors.name}
-      <p class="text-red-500 text-sm">{errors.name}</p>
-    {/if}
-  </div>
+  {#if formType !== 'login'}
+    <div class="mb-4">
+      <label for="name" class="block text-sm font-medium text-gray-700"
+        >Name</label
+      >
+      <input
+        type="text"
+        id="name"
+        bind:value={userInfo.name}
+        class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500"
+        required
+      />
+      {#if errors.name}
+        <p class="text-red-500 text-sm">{errors.name}</p>
+      {/if}
+    </div>
+  {/if}
 
   <div class="mb-4">
     <label for="email" class="block text-sm font-medium text-gray-700"
@@ -100,21 +103,24 @@
     {/if}
   </div>
 
-  <div class="mb-4">
-    <label for="confirmPassword" class="block text-sm font-medium text-gray-700"
-      >Confirm Password</label
-    >
-    <input
-      type="password"
-      id="confirmPassword"
-      bind:value={userInfo.confirmPassword}
-      class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500"
-      required
-    />
-    {#if errors.confirmPassword}
-      <p class="text-red-500 text-sm">{errors.confirmPassword}</p>
-    {/if}
-  </div>
+  {#if formType !== 'login'}
+    <div class="mb-4">
+      <label
+        for="confirmPassword"
+        class="block text-sm font-medium text-gray-700">Confirm Password</label
+      >
+      <input
+        type="password"
+        id="confirmPassword"
+        bind:value={userInfo.confirmPassword}
+        class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500"
+        required
+      />
+      {#if errors.confirmPassword}
+        <p class="text-red-500 text-sm">{errors.confirmPassword}</p>
+      {/if}
+    </div>
+  {/if}
 
   <div class="text-center mt-4">
     <button

@@ -48,6 +48,6 @@
     href="/therapist-signup"
     class="bg-orange-500 text-white font-bold py-3 px-6 rounded hover:bg-orange-400"
   >
-    Anmelden als Therapeut:in
+    Registrieren als Therapeut:in
   </a>
 </section>
