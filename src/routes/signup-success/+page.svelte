@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   // onMount(() => {
   //   // Redirect the user to the homepage after 5 seconds
@@ -10,21 +11,23 @@
   // });
 </script>
 
-<div class="flex flex-col justify-center items-center h-screen bg-gray-100 text-center">
+<div
+  class="flex flex-col justify-center items-center h-screen bg-gray-100 text-center"
+>
   <!-- Animated icon -->
-  <div class="text-6xl text-orange-500 mb-6 animate-bounce">
-    🎉
-  </div>
+  <div class="text-6xl text-orange-500 mb-6 animate-bounce">🎉</div>
 
-  <!-- Thank You message -->
-  <h1 class="text-3xl font-bold text-gray-800 mb-4 animate-fadeIn">Danke für deine Anmeldung!</h1>
+  <h1 class="text-3xl font-bold text-gray-800 mb-4 animate-fadeIn">
+    Danke für deine Anmeldung!
+  </h1>
 
-  <!-- Sub message with animation -->
-  <p class="text-lg text-gray-600 animate-fadeIn animation-delay-2">
-    Wir haben dein Profil erhalten und werden es bald überprüfen.
-    <br />
-    Wir melden uns in Kürze bei dir.
-  </p>
+  {#if $page.data.role === 'therapist'}
+    <p class="text-lg text-gray-600 animate-fadeIn animation-delay-2">
+      Wir haben dein Profil erhalten und werden es bald überprüfen.
+      <br />
+      Wir melden uns in Kürze bei dir.
+    </p>
+  {/if}
 </div>
 
 <style>

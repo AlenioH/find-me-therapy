@@ -27,12 +27,12 @@
         </ul>
       </nav>
       <div class="flex space-x-4">
-        <button
+        <a
           class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
-          on:click={openRegisterModal}
+          href="/client-signup"
         >
           Registrieren (Kunde)
-        </button>
+      </a>
         <button
           class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
           on:click={openLoginModal}

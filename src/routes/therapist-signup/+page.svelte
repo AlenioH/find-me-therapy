@@ -91,7 +91,7 @@
     });
     if (response.ok) {
       alert('User created successfully');
-      goto('/signup-success');
+      goto('/signup-success', {replaceState: true});
     } else {
       alert('Failed to create user');
     }

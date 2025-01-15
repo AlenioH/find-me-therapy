@@ -1,7 +1,7 @@
 import prisma from '$lib/prisma';
 
 // @ts-ignore
-export async function POST({ request }) {
+export async function POST({ request, cookies }) {
   const {
     email,
     password,
@@ -73,6 +73,8 @@ export async function POST({ request }) {
       });
       console.log('approval', approval);
     }
+
+    cookies.set('user_role', role, { path: '/', httpOnly: true, secure: true });
 
     return new Response(JSON.stringify(newUser), { status: 201 });
   } catch (error) {
