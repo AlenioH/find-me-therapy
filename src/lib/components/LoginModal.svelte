@@ -54,7 +54,7 @@
       });
 
       closeModal();
-      goto('/therapist-dashboard');
+      goto('/my-profile');
 
       if (!response.ok) {
         const error = await response.json();

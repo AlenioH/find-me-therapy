@@ -3,6 +3,9 @@
   import { writable } from 'svelte/store';
   import Modal from '$lib/components/LoginModal.svelte';
 
+  export let data;
+  const user = data.user;
+
   // store to control the visibility of the modals
   const showLoginModal = writable(false);
 
@@ -24,24 +27,39 @@
         </ul>
       </nav>
       <div class="flex space-x-4">
-        <a
-          class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
-          href="/client-signup"
-        >
-          Registrieren (Kunde)
-      </a>
-        <button
-          class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
-          on:click={openLoginModal}
-        >
-          Anmelden als Kunde
-        </button>
-        <button
-          class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
-          on:click={openLoginModal}
-        >
-          Anmelden als Therapeut:in
-        </button>
+        {#if !user}
+          <a
+            class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+            href="/client-signup"
+          >
+            Registrieren (Kunde)
+          </a>
+          <button
+            class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+            on:click={openLoginModal}
+          >
+            Anmelden als Kunde
+          </button>
+          <button
+            class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+            on:click={openLoginModal}
+          >
+            Anmelden als Therapeut:in
+          </button>
+        {:else}
+          <a
+            class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+            href="/my-profile"
+          >
+            Mein Profil
+          </a>
+          <button
+            class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+            on:click={openLoginModal}
+          >
+            Ausloggen
+          </button>
+        {/if}
       </div>
     </div>
   </header>

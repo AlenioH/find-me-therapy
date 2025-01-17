@@ -15,5 +15,6 @@ export async function handle({ event, resolve }) {
   }
 
   const response = await resolve(event);
+  console.log('resp', response);
   return response;
 }
