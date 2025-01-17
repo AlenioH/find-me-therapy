@@ -1,6 +1,7 @@
 <script>
-  import LoginInfoForm from './LoginInfoForm.svelte';
   import { goto } from '$app/navigation';
+  import {user as userStore} from '$lib/stores';
+  import LoginInfoForm from './LoginInfoForm.svelte';
 
   export let showModal = false;
   export let closeModal = () => {};
@@ -53,8 +54,15 @@
         }),
       });
 
-      closeModal();
-      goto('/my-profile');
+
+      if (response.ok) {
+
+        closeModal();
+        const data = await response.json();
+        userStore.set(data)
+
+        goto('/my-profile');
+      }
 
       if (!response.ok) {
         const error = await response.json();

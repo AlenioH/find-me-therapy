@@ -1,14 +1,31 @@
 <script>
   import '../app.css';
+  import { goto } from '$app/navigation';
   import { writable } from 'svelte/store';
+  import { user as userStore } from '$lib/stores';
   import Modal from '$lib/components/LoginModal.svelte';
 
   export let data;
+
   const user = data.user;
 
   // store to control the visibility of the modals
   const showLoginModal = writable(false);
 
+  async function logout() {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+    });
+
+    if (response.ok) {
+      userStore.set(null);
+      goto('/'); // Redirect to the home page or login page
+    } else {
+      console.error('Failed to logout');
+    }
+  }
+
+  $: userStore.set(user);
   // functions to open and close the modals
   const openLoginModal = () => showLoginModal.set(true);
   const closeLoginModal = () => showLoginModal.set(false);
@@ -27,7 +44,7 @@
         </ul>
       </nav>
       <div class="flex space-x-4">
-        {#if !user}
+        {#if !$userStore}
           <a
             class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
             href="/client-signup"
@@ -55,7 +72,7 @@
           </a>
           <button
             class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
-            on:click={openLoginModal}
+            on:click={logout}
           >
             Ausloggen
           </button>
