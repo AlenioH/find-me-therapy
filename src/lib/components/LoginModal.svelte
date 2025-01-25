@@ -1,6 +1,6 @@
 <script>
   import { goto } from '$app/navigation';
-  import {user as userStore} from '$lib/stores';
+  import { updateUser } from '$lib/stores';
   import LoginInfoForm from './LoginInfoForm.svelte';
 
   export let showModal = false;
@@ -8,8 +8,6 @@
   export let title = 'Modal Title';
   // @ts-ignore
   let formComponent;
-
-  const saltRounds = 10; //for bcrypt
 
   let userInfo = {
     name: '',
@@ -54,12 +52,10 @@
         }),
       });
 
-
       if (response.ok) {
-
         closeModal();
         const data = await response.json();
-        userStore.set(data)
+        updateUser(data);
 
         goto('/my-profile');
       }

@@ -1,14 +1,22 @@
 <script>
+  import { onMount } from 'svelte';
   import ClientDashboard from '$lib/components/ClientDashboard.svelte';
   import TherapistDashboard from '$lib/components/TherapistDashboard.svelte';
+  import { user as userStore, updateUser } from '$lib/stores';
 
   export let data;
   const user = data.user;
-  const roleData = data.roleData;
+
+  //hydrate the store on page load
+  onMount(() => {
+    if (user) {
+      updateUser(user);
+    }
+  });
 </script>
 
-{#if user.role === 'therapist'}
-  <TherapistDashboard {user} userData={roleData} />
+{#if $userStore.role === 'therapist'}
+  <TherapistDashboard user={{ ...$userStore }} />
 {:else}
   <ClientDashboard />
 {/if}

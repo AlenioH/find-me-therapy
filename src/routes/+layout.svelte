@@ -18,7 +18,15 @@
     });
 
     if (response.ok) {
-      userStore.set(null);
+      userStore.set({
+        id: null,
+        name: '',
+        email: '',
+        role: '',
+        roleData: null,
+        adminApproval: null,
+        appointments: null
+      });
       goto('/'); // Redirect to the home page or login page
     } else {
       console.error('Failed to logout');

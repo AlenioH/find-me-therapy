@@ -7,25 +7,42 @@ export async function load({ locals }) {
 
   const { role, id } = locals.user;
 
-  let roleData;
-  if (role === 'therapist') {
-    roleData = await prisma.therapists.findUnique({ where: { userId: id } });
-    if (roleData) {
+  const user = await prisma.users.findUnique({
+    where: { id },
+  });
 
+  if (!user) throw new Error('User not found');
+
+  let roleData = null;
+  let adminApproval = null;
+  if (role === 'therapist') {
+    roleData = await prisma.therapists.findUnique({
+      where: { userId: user.id },
+    });
+    if (roleData) {
       const serializedRoleData = {
         ...roleData,
         costPerSession: roleData.costPerSession.toNumber(),
         birthdate: roleData.birthdate.toISOString(),
       };
       roleData = serializedRoleData;
+      adminApproval = await prisma.adminApprovals.findFirst({
+        where: { therapistId: roleData.id },
+      });
     }
   } else if (role === 'client') {
     roleData = await prisma.clients.findUnique({ where: { userId: id } });
   }
 
-
   return {
-    user: locals.user || null,
-    roleData: roleData || null,
+    user: {
+      id,
+      name: user.name,
+      email: user.email,
+      role,
+      roleData: roleData,
+      adminApproval: adminApproval,
+      appointments: null
+    },
   };
 }
