@@ -40,9 +40,9 @@ export async function load({ locals }) {
       name: user.name,
       email: user.email,
       role,
-      roleData: roleData,
-      adminApproval: adminApproval,
-      appointments: null
+      roleData,
+      adminApproval,
+      appointments: null,
     },
   };
 }
