@@ -52,7 +52,7 @@
     <header
       class="bg-yellow-500 text-white shadow-lg p-4 flex justify-between items-center"
     >
-      <h2 class="text-xl font-semibold">Willkommen, Therapeut!</h2>
+      <h2 class="text-xl font-semibold">Willkommen, {user.name}!</h2>
     </header>
 
     <main class="p-6 flex flex-col gap-6">
@@ -107,7 +107,7 @@
 
       <div class="bg-white shadow-lg rounded-lg p-4">
         <h3 class="text-lg font-semibold text-yellow-700 mb-4">
-          Upcoming Appointments
+          Bevorstehende Termine
         </h3>
         <ul class="divide-y divide-gray-200">
           {#each appointments as appt}
