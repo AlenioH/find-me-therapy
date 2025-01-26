@@ -1,4 +1,5 @@
 import prisma from '$lib/prisma';
+import { serializeData } from '../../utils/serializedData';
 
 export async function load({ locals }) {
   if (!locals || !locals.user) {
@@ -20,12 +21,7 @@ export async function load({ locals }) {
       where: { userId: user.id },
     });
     if (roleData) {
-      const serializedRoleData = {
-        ...roleData,
-        costPerSession: roleData.costPerSession.toNumber(),
-        birthdate: roleData.birthdate.toISOString(),
-      };
-      roleData = serializedRoleData;
+      roleData = serializeData([roleData]);
       adminApproval = await prisma.adminApprovals.findFirst({
         where: { therapistId: roleData.id },
       });
