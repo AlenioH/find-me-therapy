@@ -2,8 +2,10 @@
   import '../app.css';
   import { goto } from '$app/navigation';
   import { writable } from 'svelte/store';
+  import { fly } from 'svelte/transition';
   import { updateUser, user as userStore } from '$lib/stores';
   import Modal from '$lib/components/LoginModal.svelte';
+  import { page } from '$app/state';
 
   export let data;
 
@@ -50,7 +52,6 @@
 </script>
 
 <div class="flex flex-col min-h-screen">
-  <!-- Header -->
   <header class="bg-yellow-500 text-white py-4 shadow-lg">
     <div class="container mx-auto flex justify-between items-center px-4">
       <h1 class="text-2xl font-bold">FindMeTherapy</h1>
@@ -99,12 +100,14 @@
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="flex-grow">
-    <slot />
+  <main class="flex-grow overflow-hidden">
+    {#key page.url.pathname}
+      <div in:fly={{ y: 10, duration: 200 }} out:fly={{ y: -10, duration: 200 }}>
+        <slot />
+      </div>
+    {/key}
   </main>
 
-  <!-- Footer -->
   <footer class="bg-yellow-500 text-white text-center py-4">
     <p>&copy; 2025 FindMeTherapy. All rights reserved.</p>
   </footer>
