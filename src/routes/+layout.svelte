@@ -2,12 +2,22 @@
   import '../app.css';
   import { goto } from '$app/navigation';
   import { writable } from 'svelte/store';
-  import { user as userStore } from '$lib/stores';
+  import { updateUser, user as userStore } from '$lib/stores';
   import Modal from '$lib/components/LoginModal.svelte';
 
   export let data;
 
-  const user = data.user;
+  const defaultUser = {
+    id: null,
+    name: '',
+    email: '',
+    role: '',
+    roleData: null,
+    adminApproval: null,
+    appointments: null,
+  };
+  // USER FROM JWT TOKEN
+  const user = data.user || defaultUser;
 
   // store to control the visibility of the modals
   const showLoginModal = writable(false);
@@ -18,14 +28,14 @@
     });
 
     if (response.ok) {
-      userStore.set({
+      updateUser({
         id: null,
         name: '',
         email: '',
         role: '',
         roleData: null,
         adminApproval: null,
-        appointments: null
+        appointments: null,
       });
       goto('/'); // Redirect to the home page or login page
     } else {
@@ -52,7 +62,7 @@
         </ul>
       </nav>
       <div class="flex space-x-4">
-        {#if !$userStore}
+        {#if !$userStore.id}
           <a
             class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
             href="/client-signup"
