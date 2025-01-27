@@ -1,5 +1,5 @@
 <script>
-  import { user as userStore } from '$lib/stores';
+  import { updateUserNews, user as userStore } from '$lib/stores';
 
   $: user = $userStore;
 
@@ -22,14 +22,31 @@
   ];
 
   function submitNews(news) {
-    fetch('/api/news', {
-      method: 'POST',
-      body: JSON.stringify({ news }),
-      headers: { 'Content-Type': 'application/json' },
-    }).then((response) => {
-      if (response.ok) alert('News submitted for admin approval!');
-      else alert('Failed to submit news.');
-    });
+    //delete news
+    if (!news) {
+      fetch('/api/post-news', {
+        method: 'POST',
+        body: JSON.stringify({ userId: user.id, news: null }),
+        headers: { 'Content-Type': 'application/json' },
+      }).then((response) => {
+        if (response.ok) {
+          updateUserNews(news);
+          alert('Gelöscht!');
+        } else alert('Failed to submit news.');
+      });
+    } else {
+      // submit news
+      fetch('/api/post-news', {
+        method: 'POST',
+        body: JSON.stringify({ userId: user.id, news }),
+        headers: { 'Content-Type': 'application/json' },
+      }).then((response) => {
+        if (response.ok) {
+          updateUserNews(news);
+          alert('News submitted for admin approval!');
+        } else alert('Failed to submit news.');
+      });
+    }
   }
 
   function changeTariff() {
@@ -116,40 +133,42 @@
     </div>
   </aside>
 
-  <div class="flex flex-col flex-1">
-    <header
-      class="bg-yellow-500 text-white shadow-lg p-4 flex justify-between items-center"
-    >
-      <h2 class="text-xl font-semibold">Willkommen, {user.name}!</h2>
-    </header>
+  {#if user.roleData}
+    <div class="flex flex-col flex-1">
+      <header
+        class="bg-yellow-500 text-white shadow-lg p-4 flex justify-between items-center"
+      >
+        <h2 class="text-xl font-semibold">Willkommen, {user.name}!</h2>
+      </header>
 
-    <main class="p-6 flex flex-col gap-6">
-      {#if adminApproval === 'pending'}
-        <div
-          class="bg-red-100 border border-red-500 text-red-800 p-4 rounded-lg shadow"
-        >
-          <strong
-            >⚠️ Ihr Profil wird derzeit von einem Administrator überprüft.</strong
+      <main class="p-6 flex flex-col gap-6">
+        {#if adminApproval === 'pending'}
+          <div
+            class="bg-red-100 border border-red-500 text-red-800 p-4 rounded-lg shadow"
           >
-          <p class="mt-2">
-            Änderungen sind nicht möglich, bis die Überprüfung abgeschlossen
-            ist.
-          </p>
-        </div>
-      {/if}
+            <strong
+              >⚠️ Ihr Profil wird derzeit von einem Administrator überprüft.</strong
+            >
+            <p class="mt-2">
+              Änderungen sind nicht möglich, bis die Überprüfung abgeschlossen
+              ist.
+            </p>
+          </div>
+        {/if}
 
-      <div id="my-info" class="bg-white shadow-lg rounded-lg p-4">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold text-yellow-700">Profile Details</h3>
-          <button
-            class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-400"
-            on:click={() => alert('Edit button clicked!')}
-          >
-            Edit
-          </button>
-        </div>
+        <div id="my-info" class="bg-white shadow-lg rounded-lg p-4">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-yellow-700">
+              Profile Details
+            </h3>
+            <button
+              class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-400"
+              on:click={() => alert('Edit button clicked!')}
+            >
+              Edit
+            </button>
+          </div>
 
-        {#if user.roleData}
           <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <li>
               <span class="font-semibold">Geschlecht:</span>
@@ -199,50 +218,81 @@
               {/each}
             </ul>
           </div>
-        {/if}
-      </div>
+        </div>
 
-      <div id="my-appts" class="bg-white shadow-lg rounded-lg p-4">
-        <h3 class="text-lg font-semibold text-yellow-700 mb-4">
-          Bevorstehende Termine
-        </h3>
-        <ul class="divide-y divide-gray-200">
-          {#each appointments as appt}
-            <li class="flex justify-between items-center py-2">
-              <div>
-                <p class="font-semibold">{appt.date}</p>
-                <p class="text-sm text-gray-500">{appt.clientName}</p>
+        <div id="my-appts" class="bg-white shadow-lg rounded-lg p-4">
+          <h3 class="text-lg font-semibold text-yellow-700 mb-4">
+            Bevorstehende Termine
+          </h3>
+          <ul class="divide-y divide-gray-200">
+            {#each appointments as appt}
+              <li class="flex justify-between items-center py-2">
+                <div>
+                  <p class="font-semibold">{appt.date}</p>
+                  <p class="text-sm text-gray-500">{appt.clientName}</p>
+                </div>
+                <a
+                  href="/manage-appointment/{appt.id}"
+                  class="text-orange-500 hover:underline"
+                >
+                  Verwalten
+                </a>
+              </li>
+            {/each}
+          </ul>
+          {#if appointments.length === 0}
+            <p class="text-gray-500">No upcoming appointments found.</p>
+          {/if}
+        </div>
+
+        <div id="my-news" class="bg-white shadow-lg rounded-lg p-4">
+          <h3 class="text-lg font-semibold text-yellow-700 mb-4">Aktuelles</h3>
+          <textarea
+            class="w-full border-2 border-gray-300 rounded-lg p-2 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="Enter news or announcements (e.g., I'll be on vacation in July)"
+            bind:value={newsText}
+          ></textarea>
+          <button
+            class="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+            on:click={() => submitNews(newsText)}
+          >
+            Speichern
+          </button>
+
+          {#if user.roleData.news}
+            <button
+              class="mt-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-400"
+              on:click={() => submitNews('')}
+            >
+              Aktuelles löschen
+            </button>
+
+            {#if user.roleData.newsApprovalStatus === 'pending'}
+              <div class="mt-4 text-yellow-600 bg-yellow-100 p-2 rounded">
+                Diese Nachricht wird derzeit vom Admin überprüft.
               </div>
-              <a
-                href="/manage-appointment/{appt.id}"
-                class="text-orange-500 hover:underline"
-              >
-                Verwalten
-              </a>
-            </li>
-          {/each}
-        </ul>
-        {#if appointments.length === 0}
-          <p class="text-gray-500">No upcoming appointments found.</p>
-        {/if}
-      </div>
+            {/if}
+          {/if}
 
-      <div id="my-news" class="bg-white shadow-lg rounded-lg p-4">
-        <h3 class="text-lg font-semibold text-yellow-700 mb-4">Aktuelles</h3>
-        <textarea
-          class="w-full border-gray-300 rounded-lg p-2"
-          placeholder="Enter news or announcements (e.g., I'll be on vacation in July)"
-          bind:value={newsText}
-          disabled={adminApproval === 'pending'}
-        ></textarea>
-        <button
-          class="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
-          on:click={() => submitNews(newsText)}
-          disabled={adminApproval === 'pending'}
-        >
-          Speichern
-        </button>
-      </div>
-    </main>
-  </div>
+          {#if user.roleData.news && user.roleData.newsUpdatedAt}
+            <div class="mt-4 bg-gray-100 p-3 rounded-lg border border-gray-300">
+              <h4 class="text-md font-semibold text-gray-700 mb-2">Vorschau</h4>
+              <p class="text-gray-800 mb-2">{user.roleData.news}</p>
+              <p class="text-sm text-gray-600">
+                Aktualisiert am: {new Date(
+                  user.roleData.newsUpdatedAt
+                ).toLocaleString('de-DE', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })}
+              </p>
+            </div>
+          {/if}
+        </div>
+      </main>
+    </div>
+  {/if}
 </div>

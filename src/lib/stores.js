@@ -13,3 +13,16 @@ export const user = writable({
 export function updateUser(data) {
   user.update((current) => ({ ...current, ...data }));
 }
+
+export function updateUserNews(news, status = 'pending', updatedAt = new Date().toISOString()) {
+  user.update((current) => ({
+    ...current,
+    // @ts-ignore
+    roleData: {
+      ...(current.roleData || {}),
+      news,
+      newsApprovalStatus: status,
+      newsUpdatedAt: updatedAt,
+    },
+  }));
+}
