@@ -110,13 +110,13 @@
                   ? 'Herr'
                   : therapist.gender === 'female'
                     ? 'Frau'
-                    : 'Therapeut'} Maxine Musterfau
+                    : 'Therapeut'} {therapist.name}
               </div>
             </div>
 
             <div class="p-4">
               <h3 class="text-xl font-semibold text-lavender-700">
-                Maxine Musterfrau
+                {therapist.name}
               </h3>
               <p class="text-gray-600">{therapist.specialization.join(', ')}</p>
               <p class="text-gray-500 mt-2">{therapist.bio}</p>
