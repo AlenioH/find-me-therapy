@@ -50,9 +50,11 @@ model therapists {
   profileVideo            String?
   qualificationsPdf       String
   birthdate               DateTime
-  adminApprovals  adminApprovals[]
-  appointments appointments[]
-
+  adminApprovals          adminApprovals[]
+  appointments            appointments[]
+  news                    String?
+  newsApprovalStatus      ApprovalStatus @default(pending)
+  newsUpdatedAt           DateTime @default(now())
 }
 
 model adminApprovals {
