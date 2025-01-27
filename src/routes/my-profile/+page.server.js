@@ -21,7 +21,7 @@ export async function load({ locals }) {
       where: { userId: user.id },
     });
     if (roleData) {
-      roleData = serializeData([roleData]);
+      roleData = serializeData([roleData])[0];
       adminApproval = await prisma.adminApprovals.findFirst({
         where: { therapistId: roleData.id },
       });
