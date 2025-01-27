@@ -16,7 +16,6 @@
   <p class="text-lg">Einfach, schnell und unkompliziert.</p>
 </section>
 
-<!-- search container -->
 <section class="container mx-auto py-12 px-4">
   <div class="flex flex-wrap justify-center space-x-4 space-y-4 md:space-y-0">
     <button
