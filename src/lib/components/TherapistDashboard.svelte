@@ -269,7 +269,7 @@
 
             {#if user.roleData.newsApprovalStatus === 'pending'}
               <div class="mt-4 text-yellow-600 bg-yellow-100 p-2 rounded">
-                Diese Nachricht wird derzeit vom Admin überprüft.
+                Diese Nachricht wird derzeit von einem Administrator überprüft.
               </div>
             {/if}
           {/if}
