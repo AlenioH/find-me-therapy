@@ -76,22 +76,42 @@
 
   const handleSubmit = async () => {
     const hashedPassword = await hashPassword(userInfo.password);
-    console.log('User info:', userInfo);
+
+    const formData = new FormData();
+
+    formData.append('name', userInfo.name);
+    formData.append('role', 'therapist');
+    formData.append('email', userInfo.email);
+    formData.append('password', hashedPassword);
+    formData.append('gender', userInfo.gender);
+    formData.append('bio', userInfo.bio);
+    formData.append('address', userInfo.address);
+    formData.append('languages', JSON.stringify(userInfo.languages)); // Convert array to string
+    formData.append('specialization', JSON.stringify(userInfo.specialization));
+    formData.append('costPerSession', userInfo.costPerSession);
+    formData.append('sessionDuration', userInfo.sessionDuration);
+    formData.append(
+      'offersFirstConsultation',
+      userInfo.offersFirstConsultation
+    );
+    formData.append('lgbtqFriendly', userInfo.lgbtqFriendly);
+    formData.append('birthdate', new Date(userInfo.birthdate).toISOString());
+    formData.append('qualificationsPdf', userInfo.qualificationsPdf);
+
+    if (userInfo.profilePicture) {
+      formData.append('profilePicture', userInfo.profilePicture);
+    }
+    if (userInfo.profileVideo) {
+      formData.append('profileVideo', userInfo.profileVideo);
+    }
+
     const response = await fetch('/api/create-user', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...userInfo,
-        // email: userInfo.email,
-        password: hashedPassword,
-        birthdate: new Date(userInfo.birthdate).toISOString(),
-        // name: userInfo.name,
-        role: 'therapist',
-      }),
+      body: formData,
     });
     if (response.ok) {
       alert('User created successfully');
-      goto('/signup-success', {replaceState: true});
+      goto('/signup-success', { replaceState: true });
     } else {
       alert('Failed to create user');
     }
@@ -104,6 +124,7 @@
       <h3 class="text-2xl font-bold mb-6">Schritt 1: Login Information</h3>
       <div class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
         <LoginInfoForm
+          formType="register"
           bind:this={formComponent}
           handleSubmit={nextStep}
           {userInfo}
@@ -212,28 +233,49 @@
           />
           LGBTQ+ freundlich
         </label>
-        <input
-          type="file"
-          accept="image/*"
-          placeholder="Profilbild hochladen"
-          bind:value={userInfo.profilePicture}
-          class="border w-full p-2 mt-4 rounded-md"
-        />
-        <input
-          type="file"
-          accept="video/*"
-          placeholder="Profilvideo hochladen"
-          bind:value={userInfo.profileVideo}
-          class="border w-full p-2 mt-4 rounded-md"
-        />
-        <input
-          type="file"
-          accept=".pdf"
-          placeholder="Qualifikationen (PDF)"
-          bind:value={userInfo.qualificationsPdf}
-          class="border w-full p-2 mt-4 rounded-md"
-          required
-        />
+        <label class="block mt-4">
+          <input
+            type="file"
+            accept="image/*"
+            placeholder="Profilbild hochladen"
+            on:change={(e) => (userInfo.profilePicture = e.target.files[0])}
+            class="border w-full p-2 mt-4 rounded-md"
+          />
+          Profilbild hochladen
+        </label>
+        {#if userInfo.profilePicture}
+          <img
+            src={URL.createObjectURL(userInfo.profilePicture)}
+            alt="Profilbild Vorschau"
+            class="w-32 h-32 mt-4 rounded-full"
+          />
+        {/if}
+        <label>
+          <input
+            type="file"
+            accept="video/*"
+            placeholder="Profilvideo hochladen"
+            on:change={(e) => (userInfo.profileVideo = e.target.files[0])}
+            class="border w-full p-2 mt-4 rounded-md"
+          />
+          Profilvideo hochladen
+        </label>
+        <label>
+          <input
+            type="file"
+            accept=".pdf"
+            placeholder="Qualifikationen (PDF)"
+            on:change={(e) => (userInfo.qualificationsPdf = e.target.files[0])}
+            class="border w-full p-2 mt-4 rounded-md"
+            required
+          />
+          Qualifikationen
+        </label>
+        {#if userInfo.qualificationsPdf}
+          <p class="mt-2 text-sm text-gray-500">
+            Hochgeladene Datei: {userInfo.qualificationsPdf.name}
+          </p>
+        {/if}
       </form>
     {/if}
 

@@ -169,7 +169,25 @@
             </button>
           </div>
 
-          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex flex-col md:flex-row gap-6 items-center">
+            {#if user.roleData.profilePicture}
+              <img
+                src={user.roleData.profilePicture}
+                alt="Profilbild"
+                class="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover shadow-md"
+              />
+            {/if}
+
+            {#if user.roleData.profileVideo}
+              <video class="w-48 md:w-64 rounded-lg shadow-md" controls>
+                <track kind="captions">
+                <source src={user.roleData.profileVideo} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            {/if}
+          </div>
+
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
             <li>
               <span class="font-semibold">Geschlecht:</span>
               {user.roleData.gender}
@@ -200,23 +218,23 @@
             </li>
           </ul>
 
-          <div class="mt-4">
+          <div class="mt-6">
             <h4 class="text-md font-semibold text-yellow-700">
-              Uploaded Files:
+              Qualifikationen
             </h4>
-            <ul class="space-y-2">
-              {#each user.roleData.files as file}
-                <li>
-                  <a
-                    href={file.url}
-                    target="_blank"
-                    class="text-blue-500 hover:underline"
-                  >
-                    {file.name}
-                  </a>
-                </li>
-              {/each}
-            </ul>
+            <iframe
+              title="Qualifikationen"
+              src={user.roleData.qualificationsPdf}
+              class="w-32 h-24 border rounded-lg shadow-md"
+            >
+            </iframe>
+            <a
+              href={user.roleData.qualificationsPdf}
+              target="_blank"
+              class="text-blue-500 hover:underline block mt-2"
+            >
+              PDF in voller Größe anzeigen
+            </a>
           </div>
         </div>
 
