@@ -5,10 +5,21 @@
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
   import bcrypt from 'bcryptjs';
 
+  export let data;
+  const specializations = Object.keys(data.specializations);
+
   const saltRounds = 10; // for bcrypt
   let currentStep = 1;
   let languagesDropdownOpen = false;
   let selectedLanguages = [];
+  const topLanguages = [
+    'Deutsch',
+    'Englisch',
+    'Türkisch',
+    'Serbisch',
+    'Arabisch',
+    'Ungarisch',
+  ];
 
   /**
    * @type {HTMLFormElement}
@@ -50,14 +61,6 @@
       selectedLanguages = [...selectedLanguages, language];
     }
   };
-
-  const specializationOptions = [
-    'Cognitive Behavioral Therapy',
-    'Psychoanalysis',
-    'Family Therapy',
-    'Trauma Therapy',
-    'Mindfulness-Based Therapy',
-  ];
 
   const nextStep = async (e) => {
     e.preventDefault();
@@ -171,6 +174,66 @@
           class="border w-full p-2 mt-4 rounded-md"
           required
         ></textarea>
+        <div class="relative w-full max-w-md">
+          <button
+            on:click={toggleLanguagesDropdown}
+            class="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-md flex justify-between items-center"
+          >
+            {#if selectedLanguages.length === 0}
+              <span class="text-gray-400">Sprachen auswählen</span>
+            {:else}
+              <span>{selectedLanguages.join(', ')}</span>
+            {/if}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 text-gray-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+          {#if languagesDropdownOpen}
+            <div
+              class="absolute z-50 mt-2 w-full bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto"
+            >
+              <!-- use:onClickOutside={() => (languagesDropdownOpen = false)} -->
+              {#each topLanguages as language}
+                <div
+                  class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                  on:click={() => selectLanguage(language)}
+                >
+                  <input
+                    type="checkbox"
+                    class="mr-2"
+                    checked={selectedLanguages.includes(language)}
+                    on:change={() => selectLanguage(language)}
+                  />
+                  <span>{language}</span>
+                </div>
+              {/each}
+              <hr />
+              {#each languages as language}
+                <div
+                  class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                  on:click={() => selectLanguage(language)}
+                >
+                  <input
+                    type="checkbox"
+                    class="mr-2"
+                    checked={selectedLanguages.includes(language)}
+                    on:change={() => selectLanguage(language)}
+                  />
+                  <span>{language}</span>
+                </div>
+              {/each}
+            </div>
+          {/if}
+        </div>
         <input
           type="text"
           autocomplete="street-address"
@@ -185,17 +248,6 @@
           class="border w-full p-2 mt-4 rounded-md"
           required
         />
-        <select
-          bind:value={userInfo.languages}
-          multiple
-          required
-          class="border w-full p-2 mt-4 rounded-md"
-        >
-          <option value="" disabled>Sprachen auswählen</option>
-          {#each languagesOptions as language}
-            <option value={language}>{language}</option>
-          {/each}
-        </select>
       </form>
     {/if}
 
@@ -212,8 +264,10 @@
           class="border w-full p-2 mt-4 rounded-md"
         >
           <option value="" disabled>Spezialisierungen auswählen</option>
-          {#each specializationOptions as specialization}
-            <option value={specialization}>{specialization}</option>
+          {#each specializations as specialization}
+            <option value={specialization}
+              >{specialization.replace('_', ' ')}</option
+            >
           {/each}
         </select>
         <input

@@ -41,7 +41,7 @@ model therapists {
   bio                     String
   address                 String
   languages               String[]
-  specialization          String[]
+  specialization          Specialization[]
   costPerSession          Decimal   @db.Decimal(10, 2)
   sessionDuration         Int
   offersFirstConsultation Boolean   @default(false)
@@ -117,4 +117,25 @@ enum Gender {
   prefer_not_to_say
 }
 
-//TODO: languages, specialization enums
+
+enum Specialization {
+  Analytische_Psychologie
+  Autogene_Psychotherapie
+  Daseinsanalyse
+  Dynamische_Gruppenpsychotherapie
+  Existenzanalyse
+  Existenzanalyse_und_Logotherapie
+  Gestalttheoretische_Psychotherapie
+  Gruppenpsychoanalyse
+  Hypnosepsychotherapie
+  Individualpsychologie
+  Integrative_Gestalttherapie
+  Integrative_Therapie
+  Katathym_Imaginative_Psychotherapie
+  Klientenzentrierte_Psychotherapie
+  Konzentrative_Bewegungstherapie
+  Neurolinguistische_Psychotherapie
+  Personenzentrierte_Psychotherapie
+  Psychoanalyse
+  Psychodrama
+}
