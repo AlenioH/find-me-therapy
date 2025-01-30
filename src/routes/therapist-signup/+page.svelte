@@ -1,10 +1,14 @@
 <script>
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  // import { onClickOutside } from "$lib/utils"; // Optional: Close dropdown when clicking outside
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
   import bcrypt from 'bcryptjs';
 
   const saltRounds = 10; // for bcrypt
   let currentStep = 1;
+  let languagesDropdownOpen = false;
+  let selectedLanguages = [];
 
   /**
    * @type {HTMLFormElement}
@@ -33,14 +37,20 @@
     birthdate: '',
   };
 
-  //TODO: enum/API
-  const languagesOptions = [
-    'English',
-    'Spanish',
-    'French',
-    'German',
-    'Chinese',
-  ];
+  $: languages = [];
+
+  const toggleLanguagesDropdown = () => {
+    languagesDropdownOpen = !languagesDropdownOpen;
+  };
+
+  const selectLanguage = (language) => {
+    if (selectedLanguages.includes(language)) {
+      selectedLanguages = selectedLanguages.filter((l) => l !== language);
+    } else {
+      selectedLanguages = [...selectedLanguages, language];
+    }
+  };
+
   const specializationOptions = [
     'Cognitive Behavioral Therapy',
     'Psychoanalysis',
@@ -55,7 +65,6 @@
     if (form && !form.reportValidity()) {
       return;
     }
-    console.log('user', userInfo);
     if (currentStep === 1) {
       // @ts-ignore
       const isValid = formComponent.triggerValidation();
@@ -116,6 +125,11 @@
       alert('Failed to create user');
     }
   };
+
+  onMount(async () => {
+    const res = await fetch('/api/languages');
+    languages = await res.json();
+  });
 </script>
 
 <section class="container mx-auto py-12 px-4 flex justify-center">
