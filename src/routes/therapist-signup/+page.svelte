@@ -1,7 +1,7 @@
 <script>
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
-  // import { onClickOutside } from "$lib/utils"; // Optional: Close dropdown when clicking outside
+  import { onClickOutside } from '../../utils/onClickOutside';
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
   import bcrypt from 'bcryptjs';
 
@@ -176,6 +176,7 @@
         ></textarea>
         <div class="relative w-full max-w-md">
           <button
+            id="languages-dropdown-button"
             on:click={toggleLanguagesDropdown}
             class="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-md flex justify-between items-center"
           >
@@ -197,15 +198,24 @@
               />
             </svg>
           </button>
+          <input
+            type="hidden"
+            name="languages"
+            value={JSON.stringify(selectedLanguages)}
+            required
+          />
           {#if languagesDropdownOpen}
             <div
               class="absolute z-50 mt-2 w-full bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto"
+              use:onClickOutside={{
+                callback: () => (languagesDropdownOpen = false),
+                excludeSelector: '#languages-dropdown-button',
+              }}
             >
-              <!-- use:onClickOutside={() => (languagesDropdownOpen = false)} -->
               {#each topLanguages as language}
-                <div
+                <label
                   class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-                  on:click={() => selectLanguage(language)}
+                  aria-checked={selectedLanguages.includes(language)}
                 >
                   <input
                     type="checkbox"
@@ -214,13 +224,13 @@
                     on:change={() => selectLanguage(language)}
                   />
                   <span>{language}</span>
-                </div>
+                </label>
               {/each}
               <hr />
               {#each languages as language}
-                <div
+                <label
                   class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-                  on:click={() => selectLanguage(language)}
+                  aria-checked={selectedLanguages.includes(language)}
                 >
                   <input
                     type="checkbox"
@@ -229,7 +239,7 @@
                     on:change={() => selectLanguage(language)}
                   />
                   <span>{language}</span>
-                </div>
+                </label>
               {/each}
             </div>
           {/if}
