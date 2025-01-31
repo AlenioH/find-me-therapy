@@ -210,7 +210,7 @@
             </li>
             <li>
               <span class="font-semibold">Spezialisierungen:</span>
-              {user.roleData.specialization.join(', ')}
+              {user.roleData.specialization.join(', ').replaceAll('_', ' ')}
             </li>
             <li class="col-span-2">
               <span class="font-semibold">Bio:</span>

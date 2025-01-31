@@ -104,8 +104,8 @@
     formData.append('gender', userInfo.gender);
     formData.append('bio', userInfo.bio);
     formData.append('address', userInfo.address);
-    formData.append('languages', JSON.stringify(userInfo.languages)); // Convert array to string
-    formData.append('specialization', JSON.stringify(userInfo.specialization));
+    formData.append('languages', JSON.stringify(selectedLanguages)); // Convert array to string
+    formData.append('specialization', JSON.stringify(selectedSpecializations));
     formData.append('costPerSession', userInfo.costPerSession);
     formData.append('sessionDuration', userInfo.sessionDuration);
     formData.append(
