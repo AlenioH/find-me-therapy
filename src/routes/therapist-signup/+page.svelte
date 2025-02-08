@@ -10,7 +10,7 @@
   const specializations = Object.keys(data.specializations);
 
   const saltRounds = 10; // for bcrypt
-  let currentStep = 1;
+  let currentStep =3;
   let selectedLanguages = [];
   let selectedSpecializations = [];
   const topLanguages = [
@@ -138,7 +138,7 @@
 </script>
 
 <section class="container mx-auto py-12 px-4 flex justify-center">
-  <div class="text-center w-full max-w-lg">
+  <div class="w-full max-w-lg">
     {#if currentStep === 1}
       <h3 class="text-2xl font-bold mb-6">Schritt 1: Login Information</h3>
       <div class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
@@ -159,41 +159,81 @@
         bind:this={form}
         class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
       >
-        <Dropdown
-          onChange={dropdownHandleChange}
-          selected={userInfo.gender}
-          placeholder="Geschlecht auswählen"
-          type="gender"
-          options={['männlich', 'weiblich', 'nicht-binär']}
-        />
-        <textarea
-          placeholder="Bio"
-          bind:value={userInfo.bio}
-          class="border w-full p-2 mt-4 rounded-md"
-          required
-        ></textarea>
-        <Dropdown
-          onChange={dropdownHandleChange}
-          options={[...topLanguages, ...languages]}
-          selected={selectedLanguages}
-          placeholder="Sprachen auswählen"
-          multiSelect={true}
-          type="languages"
-        />
-        <input
-          type="text"
-          autocomplete="street-address"
-          placeholder="Adresse"
-          bind:value={userInfo.address}
-          class="border w-full p-2 mt-4 rounded-md"
-          required
-        />
-        <input
-          type="date"
-          bind:value={userInfo.birthdate}
-          class="border w-full p-2 mt-4 rounded-md"
-          required
-        />
+        <div class="mb-4">
+          <label for="gender" class="block text-sm font-medium text-gray-700">
+            Geschlecht
+          </label>
+          <Dropdown
+            id="gender"
+            onChange={dropdownHandleChange}
+            selected={userInfo.gender}
+            placeholder="Geschlecht auswählen"
+            type="gender"
+            options={['männlich', 'weiblich', 'nicht-binär']}
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="bio" class="block text-sm font-medium text-gray-700">
+            Bio
+          </label>
+          <textarea
+            id="bio"
+            placeholder="Bio"
+            bind:value={userInfo.bio}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
+          ></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="languages"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Sprachen
+          </label>
+          <Dropdown
+            id="languages"
+            onChange={dropdownHandleChange}
+            options={[...topLanguages, ...languages]}
+            selected={selectedLanguages}
+            placeholder="Sprachen auswählen"
+            multiSelect={true}
+            type="languages"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="address" class="block text-sm font-medium text-gray-700">
+            Adresse
+          </label>
+          <input
+            type="text"
+            id="address"
+            autocomplete="street-address"
+            placeholder="Adresse"
+            bind:value={userInfo.address}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="birthdate"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Geburtsdatum
+          </label>
+          <input
+            type="date"
+            id="birthdate"
+            bind:value={userInfo.birthdate}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
+          />
+        </div>
       </form>
     {/if}
 
@@ -203,88 +243,141 @@
         bind:this={form}
         class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
       >
-        <Dropdown
-          onChange={dropdownHandleChange}
-          options={specializations}
-          selected={selectedSpecializations}
-          placeholder="Spezialisierungen auswählen"
-          multiSelect={true}
-          type="specializations"
-        />
-        <input
-          type="number"
-          placeholder="Kosten pro Sitzung (€)"
-          bind:value={userInfo.costPerSession}
-          class="border w-full p-2 mt-4 rounded-md"
-          required
-          step="0.01"
-        />
-        <input
-          type="number"
-          placeholder="Dauer der Sitzung (Minuten)"
-          bind:value={userInfo.sessionDuration}
-          class="border w-full p-2 mt-4 rounded-md"
-          required
-        />
-        <label class="block mt-4">
-          <input
-            type="checkbox"
-            bind:checked={userInfo.offersFirstConsultation}
-            class="mr-2"
+        <div class="mb-4">
+          <label
+            for="specializations"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Spezialisierungen
+          </label>
+          <Dropdown
+            id="specializations"
+            onChange={dropdownHandleChange}
+            options={specializations}
+            selected={selectedSpecializations}
+            placeholder="Spezialisierungen auswählen"
+            multiSelect={true}
+            type="specializations"
           />
-          Bietet eine erste Beratung kostenlos an
-        </label>
-        <label class="block mt-4">
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="costPerSession"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Kosten pro Sitzung (€)
+          </label>
           <input
-            type="checkbox"
-            bind:checked={userInfo.lgbtqFriendly}
-            class="mr-2"
+            type="number"
+            id="costPerSession"
+            placeholder="Kosten pro Sitzung (€)"
+            bind:value={userInfo.costPerSession}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
+            step="0.01"
           />
-          LGBTQ+ freundlich
-        </label>
-        <label class="block mt-4">
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="sessionDuration"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Dauer der Sitzung (Minuten)
+          </label>
           <input
-            type="file"
-            accept="image/*"
-            placeholder="Profilbild hochladen"
-            on:change={(e) => (userInfo.profilePicture = e.target.files[0])}
-            class="border w-full p-2 mt-4 rounded-md"
-          />
-          Profilbild hochladen
-        </label>
-        {#if userInfo.profilePicture}
-          <img
-            src={URL.createObjectURL(userInfo.profilePicture)}
-            alt="Profilbild Vorschau"
-            class="w-32 h-32 mt-4 rounded-full"
-          />
-        {/if}
-        <label>
-          <input
-            type="file"
-            accept="video/*"
-            placeholder="Profilvideo hochladen"
-            on:change={(e) => (userInfo.profileVideo = e.target.files[0])}
-            class="border w-full p-2 mt-4 rounded-md"
-          />
-          Profilvideo hochladen
-        </label>
-        <label>
-          <input
-            type="file"
-            accept=".pdf"
-            placeholder="Qualifikationen (PDF)"
-            on:change={(e) => (userInfo.qualificationsPdf = e.target.files[0])}
-            class="border w-full p-2 mt-4 rounded-md"
+            type="number"
+            id="sessionDuration"
+            placeholder="Dauer der Sitzung (Minuten)"
+            bind:value={userInfo.sessionDuration}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
             required
           />
-          Qualifikationen
-        </label>
-        {#if userInfo.qualificationsPdf}
-          <p class="mt-2 text-sm text-gray-500">
-            Hochgeladene Datei: {userInfo.qualificationsPdf.name}
-          </p>
-        {/if}
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">
+            <input
+              type="checkbox"
+              bind:checked={userInfo.offersFirstConsultation}
+              class="mr-2"
+            />
+            Bietet eine erste Beratung kostenlos an
+          </label>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">
+            <input
+              type="checkbox"
+              bind:checked={userInfo.lgbtqFriendly}
+              class="mr-2"
+            />
+            LGBTQ+ freundlich
+          </label>
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="profilePicture"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Profilbild hochladen
+          </label>
+          <input
+            type="file"
+            id="profilePicture"
+            accept="image/*"
+            on:change={(e) => (userInfo.profilePicture = e.target.files[0])}
+            class="border w-full p-2 mt-1 rounded-md"
+          />
+          {#if userInfo.profilePicture}
+            <img
+              src={URL.createObjectURL(userInfo.profilePicture)}
+              alt="Profilbild Vorschau"
+              class="w-32 h-32 mt-4 rounded-full"
+            />
+          {/if}
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="profileVideo"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Profilvideo hochladen
+          </label>
+          <input
+            type="file"
+            id="profileVideo"
+            accept="video/*"
+            on:change={(e) => (userInfo.profileVideo = e.target.files[0])}
+            class="border w-full p-2 mt-1 rounded-md"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="qualificationsPdf"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Qualifikationen (PDF)
+          </label>
+          <input
+            type="file"
+            id="qualificationsPdf"
+            accept=".pdf"
+            on:change={(e) => (userInfo.qualificationsPdf = e.target.files[0])}
+            class="border w-full p-2 mt-1 rounded-md"
+            required
+          />
+          {#if userInfo.qualificationsPdf}
+            <p class="mt-2 text-sm text-gray-500">
+              Hochgeladene Datei: {userInfo.qualificationsPdf.name}
+            </p>
+          {/if}
+        </div>
       </form>
     {/if}
 
