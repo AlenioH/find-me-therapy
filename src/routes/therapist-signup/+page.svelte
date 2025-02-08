@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { onClickOutside } from '../../utils/onClickOutside';
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
+  import Dropdown from '$lib/components/Dropdown.svelte';
   import bcrypt from 'bcryptjs';
 
   export let data;
@@ -10,7 +11,6 @@
 
   const saltRounds = 10; // for bcrypt
   let currentStep = 1;
-  let activeDropdown = null;
   let selectedLanguages = [];
   let selectedSpecializations = [];
   const topLanguages = [
@@ -51,23 +51,19 @@
 
   $: languages = [];
 
-  const toggleDropdown = (name) => {
-    activeDropdown = activeDropdown === name ? null : name;
-  };
-
-  const multiSelectHandleChange = (item, type) => {
+  const dropdownHandleChange = (value, type) => {
     if (type === 'languages') {
-      selectedLanguages = selectedLanguages.includes(item)
-        ? selectedLanguages.filter((lang) => lang !== item)
-        : [...selectedLanguages, item];
-    } else {
-      selectedSpecializations = selectedSpecializations.includes(item)
-        ? selectedSpecializations.filter((spec) => spec !== item)
-        : [...selectedSpecializations, item];
+      selectedLanguages = value;
+    }
+
+    if (type === 'specializations') {
+      selectedSpecializations = value;
+    }
+
+    if (type === 'gender') {
+      userInfo.gender = value;
     }
   };
-
-  const isDropdownOpen = (name) => activeDropdown === name;
 
   const nextStep = async (e) => {
     e.preventDefault();
@@ -101,7 +97,7 @@
     formData.append('role', 'therapist');
     formData.append('email', userInfo.email);
     formData.append('password', hashedPassword);
-    formData.append('gender', userInfo.gender);
+    formData.append('gender', userInfo.gender.replace('-', '_')); //replace for nicht-binär
     formData.append('bio', userInfo.bio);
     formData.append('address', userInfo.address);
     formData.append('languages', JSON.stringify(selectedLanguages)); // Convert array to string
@@ -163,93 +159,27 @@
         bind:this={form}
         class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
       >
-        <select
-          bind:value={userInfo.gender}
-          required
-          class="border w-full p-2 mt-4 rounded-md"
-        >
-          <option value="">Geschlecht auswählen</option>
-          <option value="male">männlich</option>
-          <option value="female">weiblich</option>
-          <option value="non-binary">non-binary</option>
-          <option value="prefer-not-to-say">will nicht sagen</option>
-        </select>
+        <Dropdown
+          onChange={dropdownHandleChange}
+          selected={userInfo.gender}
+          placeholder="Geschlecht auswählen"
+          type="gender"
+          options={['männlich', 'weiblich', 'nicht-binär']}
+        />
         <textarea
           placeholder="Bio"
           bind:value={userInfo.bio}
           class="border w-full p-2 mt-4 rounded-md"
           required
         ></textarea>
-        <div class="relative w-full max-w-md">
-          <button
-            id="languages-dropdown-button"
-            on:click={() => toggleDropdown('languages')}
-            class="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-md flex justify-between items-center"
-          >
-            {#if selectedLanguages.length === 0}
-              <span class="text-gray-400">Sprachen auswählen</span>
-            {:else}
-              <span>{selectedLanguages.join(', ')}</span>
-            {/if}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 text-gray-600"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-          <input
-            type="hidden"
-            name="languages"
-            value={JSON.stringify(selectedLanguages)}
-            required
-          />
-          {#if isDropdownOpen('languages')}
-            <div
-              class="absolute z-50 mt-2 w-full bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto"
-              use:onClickOutside={{
-                callback: () => (activeDropdown = null),
-                excludeSelector: '#languages-dropdown-button',
-              }}
-            >
-              {#each topLanguages as language}
-                <label
-                  class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-                  aria-checked={selectedLanguages.includes(language)}
-                >
-                  <input
-                    type="checkbox"
-                    class="mr-2"
-                    checked={selectedLanguages.includes(language)}
-                    on:change={() => multiSelectHandleChange(language, 'languages')}
-                  />
-                  <span>{language}</span>
-                </label>
-              {/each}
-              <hr />
-              {#each languages as language}
-                <label
-                  class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-                  aria-checked={selectedLanguages.includes(language)}
-                >
-                  <input
-                    type="checkbox"
-                    class="mr-2"
-                    checked={selectedLanguages.includes(language)}
-                    on:change={() => multiSelectHandleChange(language)}
-                  />
-                  <span>{language}</span>
-                </label>
-              {/each}
-            </div>
-          {/if}
-        </div>
+        <Dropdown
+          onChange={dropdownHandleChange}
+          options={[...topLanguages, ...languages]}
+          selected={selectedLanguages}
+          placeholder="Sprachen auswählen"
+          multiSelect={true}
+          type="languages"
+        />
         <input
           type="text"
           autocomplete="street-address"
@@ -273,63 +203,14 @@
         bind:this={form}
         class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
       >
-        <div class="relative w-full max-w-md">
-          <button
-            id="specializations-dropdown-button"
-            on:click={() => toggleDropdown('specializations')}
-            class="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-md flex justify-between items-center"
-          >
-            {#if selectedSpecializations.length === 0}
-              <span class="text-gray-400"> Specializierung auswählen</span>
-            {:else}
-              <span>{selectedSpecializations.join(', ').replaceAll('_', ' ')}</span>
-            {/if}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 text-gray-600"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-          <input
-            type="hidden"
-            name="specializations"
-            value={JSON.stringify(selectedSpecializations)}
-            required
-          />
-          {#if isDropdownOpen('specializations')}
-            <div
-              class="absolute z-50 mt-2 w-full bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto"
-              use:onClickOutside={{
-                callback: () => (activeDropdown = null),
-                excludeSelector: '#specializations-dropdown-button',
-              }}
-            >
-              {#each specializations as specialization}
-                <label
-                  class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-                  aria-checked={selectedSpecializations.includes(
-                    specialization
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    class="mr-2"
-                    checked={selectedSpecializations.includes(specialization)}
-                    on:change={() => multiSelectHandleChange(specialization, )}
-                  />
-                  <span>{specialization.replace('_', ' ')}</span>
-                </label>
-              {/each}
-            </div>
-          {/if}
-        </div>
+        <Dropdown
+          onChange={dropdownHandleChange}
+          options={specializations}
+          selected={selectedSpecializations}
+          placeholder="Spezialisierungen auswählen"
+          multiSelect={true}
+          type="specializations"
+        />
         <input
           type="number"
           placeholder="Kosten pro Sitzung (€)"
