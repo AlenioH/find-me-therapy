@@ -1,6 +1,5 @@
 <script>
-  import { onClickOutside } from "../../utils/onClickOutside";
-
+  import { onClickOutside } from '../../utils/onClickOutside';
 
   export let options = []; // List of options (e.g., gender, languages)
   export let selected = ''; // Single selected item or array for multi-select
@@ -31,7 +30,7 @@
 
 <div class="relative w-full">
   <button
-  id={`${type}-dropdown-button`}
+    id={`${type}-dropdown-button`}
     class="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-md flex justify-between items-center"
     on:click={() => toggleDropdown(type)}
   >
@@ -63,19 +62,28 @@
       }}
     >
       {#each options as option}
-        <label
-          class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+        <button
+          type="button"
+          class="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-100"
+          on:click={() => selectOption(option)}
+          role="option"
+          aria-selected={multiSelect
+            ? selected.includes(option)
+            : selected === option}
+          style={selected === option || selected.includes(option)
+            ? 'background-color: #FFDD57;'
+            : ''}
         >
           {#if multiSelect}
             <input
               type="checkbox"
               class="mr-2"
-              on:click={() => selectOption(option)}
               checked={selected.includes(option)}
+              on:click={(e) => e.stopPropagation()}
             />
           {/if}
           <span>{option.replace('_', ' ')}</span>
-        </label>
+        </button>
       {/each}
     </div>
   {/if}
