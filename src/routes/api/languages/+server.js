@@ -34,7 +34,7 @@ export async function GET() {
         Object.entries(country.languages).forEach(([key, value]) => {
           const languageName = displayNames.of(key);
 
-          if (languageName) {
+          if (languageName && languageName !== key) {
             languages.add(languageName);
           }
         });
