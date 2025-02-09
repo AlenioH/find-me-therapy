@@ -7,6 +7,7 @@
   export let multiSelect = false; // Enable multi-selection
   export let onChange; // Function to handle selection changes
   export let type; // "languages|gender|specialization"
+  export let formErrors; // Error message when not selecte
 
   let isOpen = false;
   let activeDropdown = null;
@@ -33,11 +34,12 @@
     id={`${type}-dropdown-button`}
     class="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-md flex justify-between items-center"
     on:click={() => toggleDropdown(type)}
+    aria-expanded={activeDropdown === type}
   >
     {#if !selected || (multiSelect && selected.length === 0)}
       <span class="text-gray-400">{placeholder}</span>
     {:else}
-      <span>{multiSelect ? selected.join(', ') : selected}</span>
+      <span>{multiSelect ? selected.join(', ').replace('_', ' ') : selected}</span>
     {/if}
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -86,5 +88,9 @@
         </button>
       {/each}
     </div>
+  {/if}
+
+  {#if formErrors[type]}
+    <p class="text-red-500 text-sm mt-2">Dieses Feld ist verfplichtend!</p>
   {/if}
 </div>

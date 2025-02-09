@@ -10,7 +10,7 @@
   const specializations = Object.keys(data.specializations);
 
   const saltRounds = 10; // for bcrypt
-  let currentStep =3;
+  let currentStep = 1;
   let selectedLanguages = [];
   let selectedSpecializations = [];
   const topLanguages = [
@@ -65,6 +65,7 @@
     }
   };
 
+  let formErrors = {}; // for errors in custom dropdown
   const nextStep = async (e) => {
     e.preventDefault();
     //validate form inputs
@@ -74,6 +75,18 @@
     if (currentStep === 1) {
       const isValid = formComponent.triggerValidation();
       currentStep = isValid ? 2 : 1;
+    } else if (currentStep === 2) {
+      if (!userInfo.gender) {
+        formErrors.gender = 1;
+      } else {
+        delete formErrors.gender;
+      }
+      if (!selectedLanguages.length) {
+        formErrors.languages = 1;
+      } else {
+        delete formErrors.languages;
+      }
+      currentStep = Object.keys(formErrors).length ? 2 : 3;
     } else {
       currentStep = currentStep < 3 ? currentStep + 1 : currentStep;
     }
@@ -88,7 +101,22 @@
     return hashedPassword;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let newErrors = { ...formErrors };
+    if (!selectedSpecializations.length) {
+      newErrors.specializations = 1;
+      formErrors = { ...newErrors };
+      return;
+    } else {
+      delete newErrors.specializations;
+      formErrors = { ...newErrors };
+    }
+    if (form && !form.reportValidity()) {
+      return;
+    }
+
+
     const hashedPassword = await hashPassword(userInfo.password);
 
     const formData = new FormData();
@@ -170,6 +198,7 @@
             placeholder="Geschlecht auswählen"
             type="gender"
             options={['männlich', 'weiblich', 'nicht-binär']}
+            {formErrors}
           />
         </div>
 
@@ -201,6 +230,7 @@
             placeholder="Sprachen auswählen"
             multiSelect={true}
             type="languages"
+            {formErrors}
           />
         </div>
 
@@ -258,6 +288,7 @@
             placeholder="Spezialisierungen auswählen"
             multiSelect={true}
             type="specializations"
+            {formErrors}
           />
         </div>
 
@@ -402,6 +433,7 @@
 
       {#if currentStep === 3}
         <button
+          type="submit"
           on:click={handleSubmit}
           class="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400 ml-4"
         >
