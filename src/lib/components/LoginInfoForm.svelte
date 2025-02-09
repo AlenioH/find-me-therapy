@@ -13,6 +13,9 @@
     name: '',
   };
 
+  let showPassword = false;
+  let showConfirmPassword = false;
+
   const validate = () => {
     errors = {
       email: validateEmail(userInfo.email) ? '' : 'Invalid email format',
@@ -50,6 +53,10 @@
     // @ts-ignore
     formElement.reset();
   };
+
+  $: if (showPassword) {
+    setTimeout(() => (showPassword = false), 5000); // auto-hide after 5 seconds
+  }
 </script>
 
 <form bind:this={formElement} on:submit={handleSubmit}>
@@ -87,35 +94,63 @@
     {/if}
   </div>
 
-  <div class="mb-4">
+  <div class="mb-4 relative">
     <label for="password" class="block text-sm font-medium text-gray-700"
       >Password</label
     >
     <input
-      type="password"
+      type={showPassword ? 'text' : 'password'}
       id="password"
       bind:value={userInfo.password}
-      class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500"
+      class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 pr-10"
       required
+      on:copy|preventDefault
+      on:paste|preventDefault
+      on:cut|preventDefault
     />
+    <button
+      type="button"
+      class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+      on:click={() => (showPassword = !showPassword)}
+    >
+      {#if showPassword}
+        👁️
+      {:else}
+        👁️‍🗨️
+      {/if}
+    </button>
     {#if errors.password}
       <p class="text-red-500 text-sm">{errors.password}</p>
     {/if}
   </div>
 
   {#if formType !== 'login'}
-    <div class="mb-4">
+    <div class="mb-4 relative">
       <label
         for="confirmPassword"
         class="block text-sm font-medium text-gray-700">Confirm Password</label
       >
       <input
-        type="password"
+        type={showConfirmPassword ? 'text' : 'password'}
         id="confirmPassword"
         bind:value={userInfo.confirmPassword}
-        class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500"
+        class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 pr-10"
         required
+        on:copy|preventDefault
+        on:paste|preventDefault
+        on:cut|preventDefault
       />
+      <button
+        type="button"
+        class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+        on:click={() => (showConfirmPassword = !showConfirmPassword)}
+      >
+        {#if showConfirmPassword}
+          👁️
+        {:else}
+          👁️‍🗨️
+        {/if}
+      </button>
       {#if errors.confirmPassword}
         <p class="text-red-500 text-sm">{errors.confirmPassword}</p>
       {/if}
