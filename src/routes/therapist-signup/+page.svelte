@@ -116,7 +116,6 @@
       return;
     }
 
-
     const hashedPassword = await hashPassword(userInfo.password);
 
     const formData = new FormData();
@@ -167,6 +166,8 @@
 
 <section class="container mx-auto py-12 px-4 flex justify-center">
   <div class="w-full max-w-lg">
+    <p class="text-sm text-gray-500 mb-6">* Felder sind erforderlich</p>
+
     {#if currentStep === 1}
       <h3 class="text-2xl font-bold mb-6">Schritt 1: Login Information</h3>
       <div class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
@@ -189,7 +190,7 @@
       >
         <div class="mb-4">
           <label for="gender" class="block text-sm font-medium text-gray-700">
-            Geschlecht
+            Geschlecht *
           </label>
           <Dropdown
             id="gender"
@@ -204,7 +205,7 @@
 
         <div class="mb-4">
           <label for="bio" class="block text-sm font-medium text-gray-700">
-            Bio
+            Bio *
           </label>
           <textarea
             id="bio"
@@ -220,7 +221,7 @@
             for="languages"
             class="block text-sm font-medium text-gray-700"
           >
-            Sprachen
+            Sprachen *
           </label>
           <Dropdown
             id="languages"
@@ -236,7 +237,7 @@
 
         <div class="mb-4">
           <label for="address" class="block text-sm font-medium text-gray-700">
-            Adresse
+            Adresse *
           </label>
           <input
             type="text"
@@ -254,7 +255,7 @@
             for="birthdate"
             class="block text-sm font-medium text-gray-700"
           >
-            Geburtsdatum
+            Geburtsdatum *
           </label>
           <input
             type="date"
@@ -278,7 +279,7 @@
             for="specializations"
             class="block text-sm font-medium text-gray-700"
           >
-            Spezialisierungen
+            Spezialisierungen *
           </label>
           <Dropdown
             id="specializations"
@@ -297,7 +298,7 @@
             for="costPerSession"
             class="block text-sm font-medium text-gray-700"
           >
-            Kosten pro Sitzung (€)
+            Kosten pro Sitzung (€) *
           </label>
           <input
             type="number"
@@ -315,7 +316,7 @@
             for="sessionDuration"
             class="block text-sm font-medium text-gray-700"
           >
-            Dauer der Sitzung (Minuten)
+            Dauer der Sitzung (Minuten) *
           </label>
           <input
             type="number"
@@ -393,7 +394,7 @@
             for="qualificationsPdf"
             class="block text-sm font-medium text-gray-700"
           >
-            Qualifikationen (PDF)
+            Qualifikationen (PDF) *
           </label>
           <input
             type="file"
