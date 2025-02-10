@@ -100,7 +100,7 @@
     </div>
   </header>
 
-  <main class="flex-grow overflow-hidden">
+  <main class="flex-grow">
     {#key page.url.pathname}
       <div in:fly={{ y: 10, duration: 200 }} out:fly={{ y: -10, duration: 200 }}>
         <slot />
