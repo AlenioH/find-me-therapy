@@ -16,7 +16,7 @@
 
   // Prepare languages and specializations as comma-separated strings
   const languages = therapist.languages.join(', ');
-  const specializations = therapist.specialization.join(', ').replace('_', ' ');
+  const specializations = therapist.specialization.join(', ').replaceAll('_', ' ');
 </script>
 
 <section class="max-w-7xl mx-auto p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -35,7 +35,7 @@
       <h1 class="text-5xl font-extrabold text-white mb-4 text-center">
         {therapist.user.name}
       </h1>
-      <div class="text-white text-lg space-y-2 text-center">
+      <div class="text-white text-lg space-y-2 text-left">
         <div>
           <span class="font-semibold">Spezialisierungen:</span>
           <span class="ml-2">{specializations}</span>
