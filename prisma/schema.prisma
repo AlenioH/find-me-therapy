@@ -137,4 +137,5 @@ enum Specialization {
   Personenzentrierte_Psychotherapie
   Psychoanalyse
   Psychodrama
+  Verhaltenstherapie
 }
