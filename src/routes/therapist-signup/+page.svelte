@@ -125,7 +125,7 @@
     formData.append('role', 'therapist');
     formData.append('email', userInfo.email);
     formData.append('password', hashedPassword);
-    formData.append('gender', userInfo.gender.replace('-', '_')); //replace for nicht-binär
+    formData.append('gender', userInfo.gender);
     formData.append('bio', userInfo.bio);
     formData.append('address', userInfo.address);
     formData.append('languages', JSON.stringify(selectedLanguages)); // Convert array to string

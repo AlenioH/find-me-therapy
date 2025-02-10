@@ -93,7 +93,7 @@ const createTherapist = async (userId, fields, files) => {
   const therapist = await prisma.therapists.create({
     data: {
       userId,
-      gender,
+      gender: prismaGender[fields.gender],
       bio,
       address,
       languages: JSON.parse(languages),
@@ -116,4 +116,11 @@ const createTherapist = async (userId, fields, files) => {
       status: 'pending',
     },
   });
+};
+
+
+const prismaGender = {
+  "männlich": "maennlich",
+  "weiblich": "weiblich",
+  "nicht-binär": "nicht_binaer"
 };
