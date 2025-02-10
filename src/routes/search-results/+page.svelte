@@ -1,6 +1,5 @@
 <script>
   export let data; // dummy data
-  console.log('data', data);
 
   const therapists = data.therapists;
 
