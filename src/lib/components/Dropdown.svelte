@@ -31,6 +31,7 @@
 
 <div class="relative w-full">
   <button
+    type="button"
     id={`${type}-dropdown-button`}
     class="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-md flex justify-between items-center"
     on:click={() => toggleDropdown(type)}
@@ -39,7 +40,9 @@
     {#if !selected || (multiSelect && selected.length === 0)}
       <span class="text-gray-400">{placeholder}</span>
     {:else}
-      <span>{multiSelect ? selected.join(', ').replace('_', ' ') : selected}</span>
+      <span
+        >{multiSelect ? selected.join(', ').replace('_', ' ') : selected}</span
+      >
     {/if}
     <svg
       xmlns="http://www.w3.org/2000/svg"
