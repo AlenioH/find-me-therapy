@@ -39,6 +39,10 @@ model therapists {
   user                    users     @relation(fields: [userId], references: [id])
   gender                  Gender   // ENUM('male', 'female', 'non-binary', 'prefer not to say')
   bio                     String
+  phone                   String
+  city                    String
+  state                   String
+  zipCode                 String
   address                 String
   languages               String[]
   specialization          Specialization[]
