@@ -13,6 +13,10 @@
   let currentStep = 1;
   let selectedLanguages = [];
   let selectedSpecializations = [];
+  let postalCodes = [];
+  let selectedPostalCode = '';
+  let selectedCity = '';
+  let selectedState = '';
   const topLanguages = [
     'Deutsch',
     'Englisch',
@@ -36,6 +40,9 @@
     confirmPassword: '',
     gender: '',
     bio: '',
+    postalCode: '',
+    city: '',
+    state: '',
     address: '',
     languages: [],
     specialization: [],
@@ -65,7 +72,21 @@
     }
   };
 
+  const handlePostalCodeChange = () => {
+    const matchedEntry = postalCodes[userInfo.postalCode];
+    if (matchedEntry) {
+      selectedCity = matchedEntry.city;
+      selectedState = matchedEntry.state;
+      userInfo.city = selectedCity;
+      userInfo.state = selectedState;
+    } else {
+      selectedCity = '';
+      selectedState = '';
+    }
+  };
+
   let formErrors = {}; // for errors in custom dropdown
+
   const nextStep = async (e) => {
     e.preventDefault();
     //validate form inputs
@@ -159,8 +180,11 @@
   };
 
   onMount(async () => {
-    const res = await fetch('/api/languages');
-    languages = await res.json();
+    const resLanguages = await fetch('/api/languages');
+    languages = await resLanguages.json();
+
+    const resPostalCodes = await fetch('/postalcodes.json');
+    postalCodes = await resPostalCodes.json();
   });
 </script>
 
@@ -232,6 +256,49 @@
             multiSelect={true}
             type="languages"
             {formErrors}
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            for="postalCode"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Postleitzahl (PLZ) *
+          </label>
+          <input
+            type="text"
+            id="postalCode"
+            placeholder="PLZ eingeben"
+            bind:value={userInfo.postalCode}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
+            on:change={handlePostalCodeChange}
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="city" class="block text-sm font-medium text-gray-700">
+            Stadt *
+          </label>
+          <input
+            type="text"
+            id="city"
+            bind:value={userInfo.city}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="state" class="block text-sm font-medium text-gray-700">
+            Bundesland *
+          </label>
+          <input
+            type="text"
+            id="state"
+            bind:value={userInfo.state}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
           />
         </div>
 
