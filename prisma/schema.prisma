@@ -37,7 +37,7 @@ model therapists {
   id                      Int       @id @default(autoincrement())
   userId                  Int       @unique // foreign Key (Users.id), UNIQUE
   user                    users     @relation(fields: [userId], references: [id])
-  gender                  Gender   // ENUM('male', 'female', 'non-binary', 'prefer not to say')
+  gender                  Gender
   bio                     String
   phone                   String
   city                    String

@@ -13,8 +13,8 @@
   let currentStep = 1;
   let selectedLanguages = [];
   let selectedSpecializations = [];
-  let postalCodes = [];
-  let selectedPostalCode = '';
+  let zipCodes = [];
+  let selectedZipCode = '';
   let selectedCity = '';
   let selectedState = '';
   const topLanguages = [
@@ -40,7 +40,7 @@
     confirmPassword: '',
     gender: '',
     bio: '',
-    postalCode: '',
+    zipCode: '',
     city: '',
     state: '',
     address: '',
@@ -54,6 +54,7 @@
     profileVideo: '',
     qualificationsPdf: '',
     birthdate: '',
+    phone: '',
   };
 
   $: languages = [];
@@ -72,8 +73,8 @@
     }
   };
 
-  const handlePostalCodeChange = () => {
-    const matchedEntry = postalCodes[userInfo.postalCode];
+  const handleZipCodeChange = () => {
+    const matchedEntry = zipCodes[userInfo.zipCode];
     if (matchedEntry) {
       selectedCity = matchedEntry.city;
       selectedState = matchedEntry.state;
@@ -148,6 +149,10 @@
     formData.append('gender', userInfo.gender);
     formData.append('bio', userInfo.bio);
     formData.append('address', userInfo.address);
+    formData.append('zipCode', userInfo.zipCode);
+    formData.append('city', userInfo.city);
+    formData.append('state', userInfo.state);
+    formData.append('phone', userInfo.phone);
     formData.append('languages', JSON.stringify(selectedLanguages)); // Convert array to string
     formData.append('specialization', JSON.stringify(selectedSpecializations));
     formData.append('costPerSession', userInfo.costPerSession);
@@ -183,8 +188,8 @@
     const resLanguages = await fetch('/api/languages');
     languages = await resLanguages.json();
 
-    const resPostalCodes = await fetch('/postalcodes.json');
-    postalCodes = await resPostalCodes.json();
+    const resZipCodes = await fetch('/postalcodes.json');
+    zipCodes = await resZipCodes.json();
   });
 </script>
 
@@ -259,20 +264,17 @@
           />
         </div>
         <div class="mb-4">
-          <label
-            for="postalCode"
-            class="block text-sm font-medium text-gray-700"
-          >
+          <label for="zipCode" class="block text-sm font-medium text-gray-700">
             Postleitzahl (PLZ) *
           </label>
           <input
             type="text"
-            id="postalCode"
+            id="zipCode"
             placeholder="PLZ eingeben"
-            bind:value={userInfo.postalCode}
+            bind:value={userInfo.zipCode}
             class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
             required
-            on:change={handlePostalCodeChange}
+            on:change={handleZipCodeChange}
           />
         </div>
 
@@ -312,6 +314,20 @@
             autocomplete="street-address"
             placeholder="Adresse"
             bind:value={userInfo.address}
+            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="phone" class="block text-sm font-medium text-gray-700">
+            Telefonnummer *
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            placeholder="Telefonnummer eingeben"
+            bind:value={userInfo.phone}
             class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
             required
           />

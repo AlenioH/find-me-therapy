@@ -19,7 +19,6 @@ export async function load({ params }) {
       },
     });
 
-    console.log('ther <<<<<<<<<<<<<<<<<<<<<<<<<<<<', therapist);
     therapist = serializeData([therapist])[0];
     if (!therapist) {
       return {

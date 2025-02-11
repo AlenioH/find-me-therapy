@@ -10,14 +10,12 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 }
 
 export async function POST({ request, cookies }) {
-
   let formData = new FormData(); // Default to FormData
   let fields = {};
   let files = {};
   try {
     if (request.headers.get('content-type').includes('multipart/form-data')) {
       formData = await request.formData();
-
 
       for (const [key, value] of formData.entries()) {
         if (value instanceof File) {
@@ -81,6 +79,9 @@ const createTherapist = async (userId, fields, files) => {
     gender,
     bio,
     address,
+    zipCode: zipCode,
+    city,
+    state,
     languages,
     specialization,
     costPerSession,
@@ -88,6 +89,7 @@ const createTherapist = async (userId, fields, files) => {
     offersFirstConsultation,
     lgbtqFriendly,
     birthdate,
+    phone,
   } = fields;
 
   const therapist = await prisma.therapists.create({
@@ -96,6 +98,9 @@ const createTherapist = async (userId, fields, files) => {
       gender: prismaGender[fields.gender],
       bio,
       address,
+      zipCode: zipCode,
+      city,
+      state,
       languages: JSON.parse(languages),
       specialization: JSON.parse(specialization),
       costPerSession,
@@ -106,6 +111,7 @@ const createTherapist = async (userId, fields, files) => {
       profileVideo: files.profileVideo || null,
       qualificationsPdf: files.qualificationsPdf || null,
       birthdate,
+      phone,
     },
   });
 
@@ -118,9 +124,8 @@ const createTherapist = async (userId, fields, files) => {
   });
 };
 
-
 const prismaGender = {
-  "männlich": "maennlich",
-  "weiblich": "weiblich",
-  "nicht-binär": "nicht_binaer"
+  männlich: 'maennlich',
+  weiblich: 'weiblich',
+  'nicht-binär': 'nicht_binaer',
 };
