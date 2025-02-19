@@ -107,19 +107,18 @@
     {#if showMoreFilters}
       <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
         <div>
-          <label for="gender" class="block font-medium text-gray-700"
-            >Geschlecht:</label
-          >
-          <select
+          <label for="gender" class="block font-medium text-gray-700">
+            Geschlecht
+          </label>
+          <Dropdown
             id="gender"
-            bind:value={gender}
-            class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
-          >
-            <option value="">Alle</option>
-            <option value="männlich">Männlich</option>
-            <option value="weiblich">Weiblich</option>
-            <option value="nicht_binär">Nicht-binär</option>
-          </select>
+            onChange={dropdownHandleChange}
+            selected={gender}
+            placeholder="Geschlecht auswählen"
+            multiSelect={true}
+            type="gender"
+            options={['männlich', 'weiblich', 'nicht-binär']}
+          />
         </div>
 
         <div>
