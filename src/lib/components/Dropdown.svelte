@@ -41,7 +41,7 @@
       <span class="text-gray-400">{placeholder}</span>
     {:else}
       <span
-        >{multiSelect ? selected.join(', ').replace('_', ' ') : selected}</span
+        >{multiSelect ? selected.join(', ').replaceAll('_', ' ') : selected}</span
       >
     {/if}
     <svg
@@ -87,7 +87,7 @@
               on:click={(e) => e.stopPropagation()}
             />
           {/if}
-          <span>{option.replace('_', ' ')}</span>
+          <span>{option.replaceAll('_', ' ')}</span>
         </button>
       {/each}
     </div>
