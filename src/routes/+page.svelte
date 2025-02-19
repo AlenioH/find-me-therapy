@@ -160,10 +160,7 @@
         </div>
 
         <div>
-          <label
-            for="languages"
-            class="block text-sm font-medium text-gray-700"
-          >
+          <label for="languages" class="block font-medium text-gray-700">
             Sprachen
           </label>
           <Dropdown
@@ -178,21 +175,18 @@
         </div>
 
         <div>
-          <legend class="block font-medium text-gray-700">Schwerpunkte:</legend>
-          {#each Object.keys(specializationOptions) as spec, i}
-            <div class="flex items-center">
-              <input
-                id={'spec-' + i}
-                type="checkbox"
-                bind:group={specializations}
-                value={spec}
-                class="mr-2"
-              />
-              <label for={'spec-' + i} class="text-gray-700"
-                >{spec.replace('_', ' ')}</label
-              >
-            </div>
-          {/each}
+          <label for="specializations" class="block font-medium text-gray-700">
+            Schwerpunkt
+          </label>
+          <Dropdown
+            id="specializations"
+            onChange={dropdownHandleChange}
+            options={Object.keys(specializationOptions)}
+            selected={specializations}
+            placeholder="Spezialisierungen auswählen"
+            multiSelect={true}
+            type="specializations"
+          />
         </div>
 
         <div class="flex items-center">
