@@ -7,7 +7,7 @@
   export let multiSelect = false; // Enable multi-selection
   export let onChange; // Function to handle selection changes
   export let type; // "languages|gender|specialization"
-  export let formErrors; // Error message when not selecte
+  export let formErrors = {}; // Error message when not selecte
 
   let isOpen = false;
   let activeDropdown = null;

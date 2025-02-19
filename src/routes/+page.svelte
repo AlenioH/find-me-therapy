@@ -1,30 +1,53 @@
 <script>
+  import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import Dropdown from '$lib/components/Dropdown.svelte';
 
   export let data;
 
   let specializationOptions = data.specializations;
+  let languageOptions = [];
 
   let location = 'Wien';
   let firstConsultationFree = true;
 
-  let gender = '';
+  let gender = [];
   let ageRange = [25, 60];
   let priceRange = [50, 150];
   let languages = [];
   let specializations = [];
   let lgbtqFriendly = false;
 
-  //TODO: languages from API
-  let languageOptions = ['Deutsch', 'Englisch', 'Französisch', 'Spanisch'];
-
   let showMoreFilters = false;
 
-  function performSearch() {
+  const topLanguages = [
+    'Deutsch',
+    'Englisch',
+    'Türkisch',
+    'Serbisch',
+    'Arabisch',
+    'Ungarisch',
+  ];
+
+  const dropdownHandleChange = (value, type) => {
+    if (type === 'languages') {
+      languages = value;
+    }
+
+    if (type === 'specializations') {
+      specializations = value;
+    }
+
+    if (type === 'gender') {
+      gender = value;
+    }
+  };
+
+  const performSearch = () => {
     const params = new URLSearchParams({
       location,
       firstConsultationFree: firstConsultationFree ? 'true' : 'false',
-      gender,
+      gender: gender.join('-'),
       ageRange: ageRange.join('-'),
       priceRange: priceRange.join('-'),
       languages: languages.join(','),
@@ -33,7 +56,17 @@
     });
 
     goto(`/search-results?${params.toString()}`);
-  }
+  };
+
+  const toggleFiltersView = async () => {
+    showMoreFilters = !showMoreFilters;
+
+    //only fetch languages when filters are expanded
+    if (showMoreFilters) {
+      const resLanguages = await fetch('/api/languages');
+      languageOptions = await resLanguages.json();
+    }
+  };
 </script>
 
 <section class="bg-orange-500 text-white py-12 text-center my-10">
@@ -127,19 +160,21 @@
         </div>
 
         <div>
-          <legend class="block font-medium text-gray-700">Sprachen:</legend>
-          {#each languageOptions as lang, i}
-            <div class="flex items-center">
-              <input
-                id={'lang-' + i}
-                type="checkbox"
-                bind:group={languages}
-                value={lang}
-                class="mr-2"
-              />
-              <label for={'lang-' + i} class="text-gray-700">{lang}</label>
-            </div>
-          {/each}
+          <label
+            for="languages"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Sprachen
+          </label>
+          <Dropdown
+            id="languages"
+            onChange={dropdownHandleChange}
+            options={[...topLanguages, ...languageOptions]}
+            selected={languages}
+            placeholder="Sprachen auswählen"
+            multiSelect={true}
+            type="languages"
+          />
         </div>
 
         <div>
@@ -175,7 +210,7 @@
     {/if}
 
     <button
-      on:click={() => (showMoreFilters = !showMoreFilters)}
+      on:click={toggleFiltersView}
       class="w-full md:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md transition"
     >
       {showMoreFilters ? 'Weniger Filter anzeigen' : 'Mehr Filter anzeigen'}
