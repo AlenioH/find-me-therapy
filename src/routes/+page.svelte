@@ -6,7 +6,6 @@
   let specializationOptions = data.specializations;
 
   let location = 'Wien';
-  let availability = 'ab sofort';
   let firstConsultationFree = true;
 
   let gender = '';
@@ -24,7 +23,6 @@
   function performSearch() {
     const params = new URLSearchParams({
       location,
-      availability,
       firstConsultationFree: firstConsultationFree ? 'true' : 'false',
       gender,
       ageRange: ageRange.join('-'),
@@ -58,21 +56,6 @@
           bind:value={location}
           class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
         />
-      </div>
-
-      <div>
-        <label for="availability" class="block font-medium text-gray-700"
-          >Verfügbarkeit:</label
-        >
-        <select
-          id="availability"
-          bind:value={availability}
-          class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
-        >
-          <option value="ab sofort">Ab sofort</option>
-          <option value="in 1 Woche">In 1 Woche</option>
-          <option value="in 1 Monat">In 1 Monat</option>
-        </select>
       </div>
 
       <div class="flex items-center">
