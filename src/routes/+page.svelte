@@ -9,7 +9,7 @@
   let languageOptions = [];
 
   let location = 'Wien';
-  let firstConsultationFree = true;
+  let offersFirstConsultation = true;
 
   let gender = [];
   let ageRange = [18, 80];
@@ -46,8 +46,8 @@
   const performSearch = () => {
     const params = new URLSearchParams({
       location,
-      firstConsultationFree: firstConsultationFree ? 'true' : 'false',
-      gender: gender.join('-'),
+      offersFirstConsultation: offersFirstConsultation ? 'true' : 'false',
+      gender: gender.join(','),
       ageRange: ageRange.join('-'),
       priceRange: priceRange.join('-'),
       languages: languages.join(','),
@@ -123,12 +123,12 @@
         </fieldset>
         <div class="flex items-center">
           <input
-            id="firstConsultationFree"
+            id="offersFirstConsultation"
             type="checkbox"
-            bind:checked={firstConsultationFree}
+            bind:checked={offersFirstConsultation}
             class="mr-2"
           />
-          <label for="firstConsultationFree" class="font-medium text-gray-700"
+          <label for="offersFirstConsultation" class="font-medium text-gray-700"
             >Kostenlose Erstberatung</label
           >
         </div>
