@@ -72,8 +72,18 @@ export async function load({ url }) {
     if (lgbtqFriendly) {
       where.lgbtqFriendly = true;
     }
-
-    let therapists = await prisma.therapists.findMany({ where });
+    let therapists = await prisma.therapists.findMany({
+      where,
+      include: {
+        user: {
+          select: {
+            name: true,
+            phone: true,
+            email: true,
+          },
+        },
+      },
+    });
 
     therapists = serializeData(therapists);
 

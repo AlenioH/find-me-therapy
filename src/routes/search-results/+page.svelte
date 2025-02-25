@@ -1,5 +1,5 @@
 <script>
-  export let data; // dummy data
+  export let data;
 
   const therapists = data.therapists;
 
@@ -105,19 +105,19 @@
               <div
                 class="absolute top-0 left-0 bg-black bg-opacity-50 text-white text-lg p-2"
               >
-                {therapist.gender === 'male'
+                {therapist.gender === 'maennlich'
                   ? 'Herr'
-                  : therapist.gender === 'female'
+                  : therapist.gender === 'weiblich'
                     ? 'Frau'
-                    : 'Therapeut'} {therapist.name}
+                    : 'Therapeut'} {therapist.user.name}
               </div>
             </div>
 
             <div class="p-4">
               <h3 class="text-xl font-semibold text-lavender-700">
-                {therapist.name}
+                {therapist.user.name}
               </h3>
-              <p class="text-gray-600">{therapist.specialization.join(', ')}</p>
+              <p class="text-gray-600">{therapist.specialization.join(', ').replaceAll('_', ' ')}</p>
               <p class="text-gray-500 mt-2">{therapist.bio}</p>
 
               <div
