@@ -41,7 +41,7 @@
       <span class="text-gray-400">{placeholder}</span>
     {:else}
       <span
-        >{multiSelect ? selected.join(', ').replaceAll('_', ' ') : selected}</span
+        >{multiSelect ? selected.join(', ').replaceAll('_', ' ').replaceAll('ae', 'ä') : selected}</span
       >
     {/if}
     <svg

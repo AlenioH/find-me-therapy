@@ -1,22 +1,25 @@
 <script>
   import Dropdown from '$lib/components/Dropdown.svelte';
   import { onMount } from 'svelte';
+
   export let data;
+
+  console.log('data', data);
 
   const therapists = data.therapists;
 
   let specializationOptions = data.specializations;
   let languageOptions = [];
 
-  let location = 'Wien';
+  let location = data.location || '';
   let offersFirstConsultation = true;
 
-  let gender = [];
-  let ageRange = [18, 80];
-  let priceRange = [50, 150];
-  let languages = [];
-  let specializations = [];
-  let lgbtqFriendly = false;
+  let gender = data.gender || [];
+  let ageRange = data.ageRange || [];
+  let priceRange = data.priceRange || [];
+  let languages = data.languages || [];
+  let specializations = data.specializations || [];
+  let lgbtqFriendly = data.lgbtqFriendly;
 
   const topLanguages = [
     'Deutsch',
@@ -228,7 +231,7 @@
       Suchergebnisse für Therapeuten
     </h2>
 
-    {#if therapists.length === 0}
+    {#if therapists?.length === 0}
       <p class="text-center text-gray-500">
         Es wurden keine Therapeuten gefunden, die Ihrer Suche entsprechen.
       </p>

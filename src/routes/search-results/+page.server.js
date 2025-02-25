@@ -87,7 +87,17 @@ export async function load({ url }) {
 
     therapists = serializeData(therapists);
 
-    return { therapists };
+    return {
+      therapists,
+      location,
+      offersFirstConsultation,
+      gender,
+      ageRange,
+      priceRange,
+      languages,
+      specializations,
+      lgbtqFriendly,
+    };
   } catch (error) {
     console.error('Error fetching therapists:', error);
     return { therapists: [] };
