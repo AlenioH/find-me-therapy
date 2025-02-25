@@ -77,173 +77,170 @@
 <section
   class="container mx-auto max-w-[800px] py-12 px-6 border-2 border-gray-300 rounded-lg shadow-lg my-10 bg-white"
 >
-  <div class="grid gap-6">
-    <form on:submit={performSearch}>
-      <div class="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label for="location" class="block font-medium text-gray-700"
-            >PLZ/Ort:</label
+  <form on:submit={performSearch} class="grid gap-6">
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label for="location" class="block font-medium text-gray-700"
+          >PLZ/Ort:</label
+        >
+        <input
+          id="location"
+          type="text"
+          bind:value={location}
+          class="w-full max-w-[200px] border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <fieldset>
+          <legend class="font-medium text-gray-700"
+            >Preis pro Sitzung (€)</legend
           >
+          <div class="flex items-center gap-2">
+            <label for="priceFrom" class="sr-only">Preis von</label>
+            <input
+              id="priceFrom"
+              type="number"
+              min="30"
+              max="200"
+              step="5"
+              bind:value={priceRange[0]}
+              class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+              placeholder="Von"
+            />
+            <span class="text-gray-600">-</span>
+            <label for="priceTo" class="sr-only">Preis bis</label>
+            <input
+              id="priceTo"
+              type="number"
+              min="30"
+              max="200"
+              step="5"
+              bind:value={priceRange[1]}
+              class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+              placeholder="Bis"
+            />
+          </div>
+        </fieldset>
+        <div class="flex items-center">
           <input
-            id="location"
-            type="text"
-            bind:value={location}
-            class="w-full max-w-[200px] border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+            id="offersFirstConsultation"
+            type="checkbox"
+            bind:checked={offersFirstConsultation}
+            class="mr-2"
+          />
+          <label for="offersFirstConsultation" class="font-medium text-gray-700"
+            >Kostenlose Erstberatung</label
+          >
+        </div>
+      </div>
+    </div>
+
+    {#if showMoreFilters}
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div>
+          <label for="gender" class="block font-medium text-gray-700"
+            >Geschlecht</label
+          >
+          <Dropdown
+            id="gender"
+            onChange={dropdownHandleChange}
+            selected={gender}
+            placeholder="Geschlecht auswählen"
+            multiSelect={true}
+            type="gender"
+            options={['männlich', 'weiblich', 'nicht-binär']}
           />
         </div>
 
-        <div class="flex flex-col gap-2">
-          <fieldset>
-            <legend class="font-medium text-gray-700"
-              >Preis pro Sitzung (€)</legend
-            >
-            <div class="flex items-center gap-2">
-              <label for="priceFrom" class="sr-only">Preis von</label>
-              <input
-                id="priceFrom"
-                type="number"
-                min="30"
-                max="200"
-                step="5"
-                bind:value={priceRange[0]}
-                class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
-                placeholder="Von"
-              />
-              <span class="text-gray-600">-</span>
-              <label for="priceTo" class="sr-only">Preis bis</label>
-              <input
-                id="priceTo"
-                type="number"
-                min="30"
-                max="200"
-                step="5"
-                bind:value={priceRange[1]}
-                class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
-                placeholder="Bis"
-              />
-            </div>
-          </fieldset>
-          <div class="flex items-center">
+        <fieldset>
+          <legend class="font-medium text-gray-700">Altersspanne</legend>
+          <div class="flex items-center gap-2">
+            <label for="ageFrom" class="sr-only">Alter von</label>
             <input
-              id="offersFirstConsultation"
-              type="checkbox"
-              bind:checked={offersFirstConsultation}
-              class="mr-2"
+              id="ageFrom"
+              type="number"
+              min="18"
+              max="80"
+              step="1"
+              bind:value={ageRange[0]}
+              class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+              placeholder="Von"
             />
-            <label
-              for="offersFirstConsultation"
-              class="font-medium text-gray-700">Kostenlose Erstberatung</label
-            >
+            <span class="text-gray-600">-</span>
+            <label for="ageTo" class="sr-only">Alter bis</label>
+            <input
+              id="ageTo"
+              type="number"
+              min="18"
+              max="80"
+              step="1"
+              bind:value={ageRange[1]}
+              class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+              placeholder="Bis"
+            />
           </div>
+        </fieldset>
+
+        <div>
+          <label for="languages" class="block font-medium text-gray-700"
+            >Sprachen</label
+          >
+          <Dropdown
+            id="languages"
+            onChange={dropdownHandleChange}
+            options={[...topLanguages, ...languageOptions]}
+            selected={languages}
+            placeholder="Sprachen auswählen"
+            multiSelect={true}
+            type="languages"
+          />
+        </div>
+
+        <div>
+          <label for="specializations" class="block font-medium text-gray-700"
+            >Schwerpunkt</label
+          >
+          <Dropdown
+            id="specializations"
+            onChange={dropdownHandleChange}
+            options={Object.keys(specializationOptions)}
+            selected={specializations}
+            placeholder="Schwerpunkt auswählen"
+            multiSelect={true}
+            type="specializations"
+          />
+        </div>
+
+        <div class="flex items-center">
+          <input
+            id="lgbtqFriendly"
+            type="checkbox"
+            bind:checked={lgbtqFriendly}
+            class="mr-2"
+          />
+          <label for="lgbtqFriendly" class="font-medium text-gray-700"
+            >LGBTQ+ freundlich</label
+          >
         </div>
       </div>
+    {/if}
 
-      {#if showMoreFilters}
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div>
-            <label for="gender" class="block font-medium text-gray-700"
-              >Geschlecht</label
-            >
-            <Dropdown
-              id="gender"
-              onChange={dropdownHandleChange}
-              selected={gender}
-              placeholder="Geschlecht auswählen"
-              multiSelect={true}
-              type="gender"
-              options={['männlich', 'weiblich', 'nicht-binär']}
-            />
-          </div>
+    <button
+      type="button"
+      on:click={toggleFiltersView}
+      class="w-full md:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md transition"
+    >
+      {showMoreFilters ? 'Weniger Filter anzeigen' : 'Mehr Filter anzeigen'}
+    </button>
 
-          <fieldset>
-            <legend class="font-medium text-gray-700">Altersspanne</legend>
-            <div class="flex items-center gap-2">
-              <label for="ageFrom" class="sr-only">Alter von</label>
-              <input
-                id="ageFrom"
-                type="number"
-                min="18"
-                max="80"
-                step="1"
-                bind:value={ageRange[0]}
-                class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
-                placeholder="Von"
-              />
-              <span class="text-gray-600">-</span>
-              <label for="ageTo" class="sr-only">Alter bis</label>
-              <input
-                id="ageTo"
-                type="number"
-                min="18"
-                max="80"
-                step="1"
-                bind:value={ageRange[1]}
-                class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
-                placeholder="Bis"
-              />
-            </div>
-          </fieldset>
-
-          <div>
-            <label for="languages" class="block font-medium text-gray-700"
-              >Sprachen</label
-            >
-            <Dropdown
-              id="languages"
-              onChange={dropdownHandleChange}
-              options={[...topLanguages, ...languageOptions]}
-              selected={languages}
-              placeholder="Sprachen auswählen"
-              multiSelect={true}
-              type="languages"
-            />
-          </div>
-
-          <div>
-            <label for="specializations" class="block font-medium text-gray-700"
-              >Schwerpunkt</label
-            >
-            <Dropdown
-              id="specializations"
-              onChange={dropdownHandleChange}
-              options={Object.keys(specializationOptions)}
-              selected={specializations}
-              placeholder="Schwerpunkt auswählen"
-              multiSelect={true}
-              type="specializations"
-            />
-          </div>
-
-          <div class="flex items-center">
-            <input
-              id="lgbtqFriendly"
-              type="checkbox"
-              bind:checked={lgbtqFriendly}
-              class="mr-2"
-            />
-            <label for="lgbtqFriendly" class="font-medium text-gray-700"
-              >LGBTQ+ freundlich</label
-            >
-          </div>
-        </div>
-      {/if}
-
-      <button
-        type="button"
-        on:click={toggleFiltersView}
-        class="w-full md:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md transition"
-      >
-        {showMoreFilters ? 'Weniger Filter anzeigen' : 'Mehr Filter anzeigen'}
-      </button>
-
-      <button
-        type="submit"
-        class="w-full md:w-auto md:mx-auto bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-md transition"
-      >
-        Suchen
-      </button>
-    </form>
-  </div>
+    <button
+      type="submit"
+      class="w-full md:w-auto md:mx-auto bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-md transition"
+    >
+      Suchen
+    </button>
+  </form>
 
   <hr class="my-10 border-gray-300" />
 </section>
