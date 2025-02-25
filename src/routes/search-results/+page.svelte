@@ -1,86 +1,223 @@
 <script>
+  import Dropdown from '$lib/components/Dropdown.svelte';
+  import { onMount } from 'svelte';
   export let data;
 
   const therapists = data.therapists;
 
+  let specializationOptions = data.specializations;
+  let languageOptions = [];
+
+  let location = 'Wien';
+  let offersFirstConsultation = true;
+
+  let gender = [];
+  let ageRange = [18, 80];
+  let priceRange = [50, 150];
+  let languages = [];
+  let specializations = [];
+  let lgbtqFriendly = false;
+
+  const topLanguages = [
+    'Deutsch',
+    'Englisch',
+    'Türkisch',
+    'Serbisch',
+    'Arabisch',
+    'Ungarisch',
+  ];
+
+  const dropdownHandleChange = (value, type) => {
+    if (type === 'languages') {
+      languages = value;
+    }
+
+    if (type === 'specializations') {
+      specializations = value;
+    }
+
+    if (type === 'gender') {
+      gender = value;
+    }
+  };
+
+  const performSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams({
+      location,
+      offersFirstConsultation: offersFirstConsultation ? 'true' : 'false',
+      gender: gender.join(','),
+      ageRange: ageRange.join('-'),
+      priceRange: priceRange.join('-'),
+      languages: languages.join(','),
+      specializations: specializations.join(','),
+      lgbtqFriendly: lgbtqFriendly ? 'true' : 'false',
+    });
+
+    goto(`/search-results?${params.toString()}`);
+  };
+
   // Function to generate a dummy "next possible appointment" date (e.g., next week)
-  function getNextAppointment() {
+  const getNextAppointment = () => {
     const now = new Date();
     now.setDate(now.getDate() + 7);
     return now.toLocaleString('de-DE');
-  }
-
-  // Dummy filters
-  let filters = {
-    gender: 'any',
-    language: 'any',
-    specialization: 'any',
-    cost: 'any',
   };
-
-  const genderOptions = ['any', 'male', 'female', 'non-binary'];
-  const languageOptions = ['any', 'English', 'Spanish', 'German'];
-  const specializationOptions = ['any', 'Anxiety', 'Depression', 'Mindfulness'];
-  const costOptions = ['any', 'under 50€', '50€ - 100€', 'above 100€'];
-
   const calculateAge = (birthdate) => {
     if (!birthdate) return 'N/A';
     const birthYear = new Date(birthdate).getFullYear();
     const currentYear = new Date().getFullYear();
     return currentYear - birthYear;
   };
+
+  onMount(async () => {
+    const resLanguages = await fetch('/api/languages');
+    languageOptions = await resLanguages.json();
+  });
 </script>
 
 <div class="flex">
   <div class="w-64 bg-orange-100 p-6 hidden lg:block">
     <h3 class="text-xl font-bold text-orange-600 mb-4">Filter</h3>
-
     <div class="mb-4">
-      <h4 class="text-lg font-semibold text-gray-700">Geschlecht</h4>
-      <select
-        bind:value={filters.gender}
-        class="w-full mt-2 p-2 border rounded"
+      <label for="location" class="block font-medium text-gray-700"
+        >PLZ/Ort:</label
       >
-        {#each genderOptions as option}
-          <option value={option}>{option}</option>
-        {/each}
-      </select>
+      <input
+        id="location"
+        type="text"
+        bind:value={location}
+        class="w-full max-w-[200px] border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+      />
+    </div>
+    <fieldset class="mb-4">
+      <legend class="font-medium text-gray-700">Preis pro Sitzung (€)</legend>
+      <div class="flex items-center gap-2">
+        <label for="priceFrom" class="sr-only">Preis von</label>
+        <input
+          id="priceFrom"
+          type="number"
+          min="30"
+          max="200"
+          step="5"
+          bind:value={priceRange[0]}
+          class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+          placeholder="Von"
+        />
+        <span class="text-gray-600">-</span>
+        <label for="priceTo" class="sr-only">Preis bis</label>
+        <input
+          id="priceTo"
+          type="number"
+          min="30"
+          max="200"
+          step="5"
+          bind:value={priceRange[1]}
+          class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+          placeholder="Bis"
+        />
+      </div>
+    </fieldset>
+    <div class="flex items-center mb-4">
+      <input
+        id="offersFirstConsultation"
+        type="checkbox"
+        bind:checked={offersFirstConsultation}
+        class="mr-2"
+      />
+      <label for="offersFirstConsultation" class="font-medium text-gray-700"
+        >Kostenlose Erstberatung</label
+      >
+    </div>
+    <div class="mb-4">
+      <div>
+        <label for="gender" class="text-lg font-semibold text-gray-700"
+          >Geschlecht</label
+        >
+        <Dropdown
+          id="gender"
+          onChange={dropdownHandleChange}
+          selected={gender}
+          placeholder="Geschlecht auswählen"
+          multiSelect={true}
+          type="gender"
+          options={['männlich', 'weiblich', 'nicht-binär']}
+        />
+      </div>
     </div>
 
-    <div class="mb-4">
-      <h4 class="text-lg font-semibold text-gray-700">Sprache</h4>
-      <select
-        bind:value={filters.language}
-        class="w-full mt-2 p-2 border rounded"
-      >
-        {#each languageOptions as option}
-          <option value={option}>{option}</option>
-        {/each}
-      </select>
-    </div>
+    <fieldset>
+      <legend class="font-medium text-gray-700">Altersspanne</legend>
+      <div class="flex items-center gap-2">
+        <label for="ageFrom" class="sr-only">Alter von</label>
+        <input
+          id="ageFrom"
+          type="number"
+          min="18"
+          max="80"
+          step="1"
+          bind:value={ageRange[0]}
+          class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+          placeholder="Von"
+        />
+        <span class="text-gray-600">-</span>
+        <label for="ageTo" class="sr-only">Alter bis</label>
+        <input
+          id="ageTo"
+          type="number"
+          min="18"
+          max="80"
+          step="1"
+          bind:value={ageRange[1]}
+          class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
+          placeholder="Bis"
+        />
+      </div>
+    </fieldset>
 
     <div class="mb-4">
-      <h4 class="text-lg font-semibold text-gray-700">Spezialisierung</h4>
-      <select
-        bind:value={filters.specialization}
-        class="w-full mt-2 p-2 border rounded"
+      <label for="languages" class="text-lg font-semibold text-gray-700"
+        >Sprachen</label
       >
-        {#each specializationOptions as option}
-          <option value={option}>{option}</option>
-        {/each}
-      </select>
+      <Dropdown
+        id="languages"
+        onChange={dropdownHandleChange}
+        options={[...topLanguages, ...languageOptions]}
+        selected={languages}
+        placeholder="Sprachen auswählen"
+        multiSelect={true}
+        type="languages"
+      />
     </div>
 
+    <div class="flex items-center mb-4">
+      <input
+        id="lgbtqFriendly"
+        type="checkbox"
+        bind:checked={lgbtqFriendly}
+        class="mr-2"
+      />
+      <label for="lgbtqFriendly" class="font-medium text-gray-700"
+        >LGBTQ+ freundlich</label
+      >
+    </div>
     <div class="mb-4">
-      <h4 class="text-lg font-semibold text-gray-700">Kosten</h4>
-      <select bind:value={filters.cost} class="w-full mt-2 p-2 border rounded">
-        {#each costOptions as option}
-          <option value={option}>{option}</option>
-        {/each}
-      </select>
+      <label for="specializations" class="text-lg font-semibold text-gray-700"
+        >Schwerpunkt</label
+      >
+      <Dropdown
+        id="specializations"
+        onChange={dropdownHandleChange}
+        options={Object.keys(specializationOptions)}
+        selected={specializations}
+        placeholder="Schwerpunkt auswählen"
+        multiSelect={true}
+        type="specializations"
+      />
     </div>
 
     <button
+      on:click={performSearch}
       class="bg-yellow-500 text-black font-bold py-2 px-4 rounded-full hover:bg-yellow-400 transition-colors w-full"
     >
       Filter anwenden
