@@ -6,8 +6,8 @@
   // Function to generate a dummy "next possible appointment" date (e.g., next week)
   function getNextAppointment() {
     const now = new Date();
-    now.setDate(now.getDate() + 7); // Adds 7 days to the current date for the next possible appointment
-    return now.toLocaleString('de-DE'); // Formatting date in German locale
+    now.setDate(now.getDate() + 7);
+    return now.toLocaleString('de-DE');
   }
 
   // Dummy filters
@@ -22,6 +22,13 @@
   const languageOptions = ['any', 'English', 'Spanish', 'German'];
   const specializationOptions = ['any', 'Anxiety', 'Depression', 'Mindfulness'];
   const costOptions = ['any', 'under 50€', '50€ - 100€', 'above 100€'];
+
+  const calculateAge = (birthdate) => {
+    if (!birthdate) return 'N/A';
+    const birthYear = new Date(birthdate).getFullYear();
+    const currentYear = new Date().getFullYear();
+    return currentYear - birthYear;
+  };
 </script>
 
 <div class="flex">
@@ -79,7 +86,6 @@
       Filter anwenden
     </button>
   </div>
-
   <section class="flex-1 p-4">
     <h2 class="text-3xl font-bold mb-6 text-center text-orange-600">
       Suchergebnisse für Therapeuten
@@ -109,15 +115,20 @@
                   ? 'Herr'
                   : therapist.gender === 'weiblich'
                     ? 'Frau'
-                    : 'Therapeut'} {therapist.user.name}
+                    : 'Therapeut'}
+                {therapist.user.name}
               </div>
             </div>
 
             <div class="p-4">
               <h3 class="text-xl font-semibold text-lavender-700">
-                {therapist.user.name}
+                {therapist.user.name}, {calculateAge(therapist.birthdate)} Jahre
               </h3>
-              <p class="text-gray-600">{therapist.specialization.join(', ').replaceAll('_', ' ')}</p>
+              <p class="text-gray-600">{therapist.city}</p>
+
+              <p class="text-gray-600 mt-2">
+                {therapist.specialization.join(', ').replaceAll('_', ' ')}
+              </p>
               <p class="text-gray-500 mt-2">{therapist.bio}</p>
 
               <div
@@ -127,19 +138,33 @@
                 <span>{therapist.sessionDuration} min Sitzung</span>
               </div>
 
-              <div
-                class="mt-4 flex justify-between items-center text-sm text-gray-500"
-              >
+              <div class="mt-4 text-sm text-gray-500">
                 <span
                   >{therapist.lgbtqFriendly
                     ? 'LGBTQ+ Freundlich'
                     : 'Nicht LGBTQ+ Freundlich'}</span
                 >
-                <span>€{therapist.costPerSession} pro Sitzung</span>
+              </div>
+
+              <div class="mt-4 text-sm text-gray-700">
+                <p>
+                  <strong>Preis:</strong> €{therapist.costPerSession} pro Sitzung
+                </p>
+                {#if therapist.offersFirstConsultation}
+                  <p class="text-green-600 font-semibold">
+                    ✅ Kostenlose Erstberatung verfügbar
+                  </p>
+                {/if}
               </div>
 
               <div class="mt-4 text-sm text-gray-500">
                 Nächster verfügbarer Termin: {getNextAppointment()}
+              </div>
+
+              <div class="mt-4 text-sm text-gray-700">
+                <p><strong>Adresse:</strong> {therapist.address}</p>
+                <!-- <p><strong>Telefon:</strong> {therapist.user.phone}</p>
+                <p><strong>Email:</strong> {therapist.user.email}</p> -->
               </div>
 
               <div
@@ -166,23 +191,14 @@
 </div>
 
 <style>
-  /* Custom lavender color */
   .text-lavender-700 {
     color: #8a4fff;
   }
-  .bg-lavender-500 {
-    background-color: #8a4fff;
-  }
-  .hover\:bg-lavender-400:hover {
-    background-color: #9c5dfc;
-  }
 
-  /* Sidebar styling */
   .lg\:block {
     display: block;
   }
 
-  /* Responsive Layout */
   .flex {
     display: flex;
   }
@@ -190,12 +206,10 @@
     flex: 1;
   }
 
-  /* Grid styling to display one therapist per row */
   .grid-cols-1 {
-    grid-template-columns: repeat(1, minmax(0, 1fr)); /* One per row */
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-  /* Make the layout responsive on larger screens */
   @media (min-width: 1024px) {
     .lg\:block {
       display: block;
