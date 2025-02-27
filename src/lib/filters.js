@@ -63,7 +63,6 @@ export function queryToFilters(searchParams) {
     gender: params
       .get('gender')
       ?.split(',')
-      .map((g) => g.replace('-', '_').replace('ä', 'ae'))
       .filter(Boolean),
     ageRange: params.get('ageRange')?.split('-').map(Number),
     lgbtqFriendly: params.get('lgbtqFriendly') === 'true',
