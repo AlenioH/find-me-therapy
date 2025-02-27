@@ -1,25 +1,17 @@
 <script>
-  import Dropdown from '$lib/components/Dropdown.svelte';
+  import { page } from '$app/stores';
+  import { filters, queryToFilters, dropdownHandleChange } from '$lib/filters';
   import { onMount } from 'svelte';
+  import Dropdown from '$lib/components/Dropdown.svelte';
 
   export let data;
 
-  console.log('data', data);
-
   const therapists = data.therapists;
+
+  $: filters.set(queryToFilters($page.url.searchParams.toString()));
 
   let specializationOptions = data.specializations;
   let languageOptions = [];
-
-  let location = data.location || '';
-  let offersFirstConsultation = true;
-
-  let gender = data.gender || [];
-  let ageRange = data.ageRange || [];
-  let priceRange = data.priceRange || [];
-  let languages = data.languages || [];
-  let specializations = data.specializations || [];
-  let lgbtqFriendly = data.lgbtqFriendly;
 
   const topLanguages = [
     'Deutsch',
@@ -29,20 +21,6 @@
     'Arabisch',
     'Ungarisch',
   ];
-
-  const dropdownHandleChange = (value, type) => {
-    if (type === 'languages') {
-      languages = value;
-    }
-
-    if (type === 'specializations') {
-      specializations = value;
-    }
-
-    if (type === 'gender') {
-      gender = value;
-    }
-  };
 
   const performSearch = (e) => {
     e.preventDefault();
@@ -89,7 +67,7 @@
       <input
         id="location"
         type="text"
-        bind:value={location}
+        bind:value={$filters.location}
         class="w-full max-w-[200px] border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
       />
     </div>
@@ -103,7 +81,7 @@
           min="30"
           max="200"
           step="5"
-          bind:value={priceRange[0]}
+          bind:value={$filters.priceRange[0]}
           class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
           placeholder="Von"
         />
@@ -115,7 +93,7 @@
           min="30"
           max="200"
           step="5"
-          bind:value={priceRange[1]}
+          bind:value={$filters.priceRange[1]}
           class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
           placeholder="Bis"
         />
@@ -125,7 +103,7 @@
       <input
         id="offersFirstConsultation"
         type="checkbox"
-        bind:checked={offersFirstConsultation}
+        bind:checked={$filters.offersFirstConsultation}
         class="mr-2"
       />
       <label for="offersFirstConsultation" class="font-medium text-gray-700"
@@ -140,7 +118,7 @@
         <Dropdown
           id="gender"
           onChange={dropdownHandleChange}
-          selected={gender}
+          selected={$filters.gender}
           placeholder="Geschlecht auswählen"
           multiSelect={true}
           type="gender"
@@ -159,7 +137,7 @@
           min="18"
           max="80"
           step="1"
-          bind:value={ageRange[0]}
+          bind:value={$filters.ageRange[0]}
           class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
           placeholder="Von"
         />
@@ -171,7 +149,7 @@
           min="18"
           max="80"
           step="1"
-          bind:value={ageRange[1]}
+          bind:value={$filters.ageRange[1]}
           class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
           placeholder="Bis"
         />
@@ -186,7 +164,7 @@
         id="languages"
         onChange={dropdownHandleChange}
         options={[...topLanguages, ...languageOptions]}
-        selected={languages}
+        selected={$filters.languages}
         placeholder="Sprachen auswählen"
         multiSelect={true}
         type="languages"
@@ -197,7 +175,7 @@
       <input
         id="lgbtqFriendly"
         type="checkbox"
-        bind:checked={lgbtqFriendly}
+        bind:checked={$filters.lgbtqFriendly}
         class="mr-2"
       />
       <label for="lgbtqFriendly" class="font-medium text-gray-700"
@@ -212,7 +190,7 @@
         id="specializations"
         onChange={dropdownHandleChange}
         options={Object.keys(specializationOptions)}
-        selected={specializations}
+        selected={$filters.specializations}
         placeholder="Schwerpunkt auswählen"
         multiSelect={true}
         type="specializations"
@@ -303,8 +281,6 @@
 
               <div class="mt-4 text-sm text-gray-700">
                 <p><strong>Adresse:</strong> {therapist.address}</p>
-                <!-- <p><strong>Telefon:</strong> {therapist.user.phone}</p>
-                <p><strong>Email:</strong> {therapist.user.email}</p> -->
               </div>
 
               <div

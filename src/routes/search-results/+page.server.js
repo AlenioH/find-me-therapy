@@ -89,14 +89,6 @@ export async function load({ url }) {
 
     return {
       therapists,
-      location,
-      offersFirstConsultation,
-      gender,
-      ageRange,
-      priceRange,
-      languages,
-      specializations,
-      lgbtqFriendly,
     };
   } catch (error) {
     console.error('Error fetching therapists:', error);

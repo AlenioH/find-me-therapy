@@ -1,22 +1,13 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { filters, filtersToQuery, dropdownHandleChange } from '$lib/filters';
   import Dropdown from '$lib/components/Dropdown.svelte';
 
   export let data;
 
   let specializationOptions = data.specializations;
   let languageOptions = [];
-
-  let location = 'Wien';
-  let offersFirstConsultation = true;
-
-  let gender = [];
-  let ageRange = [18, 80];
-  let priceRange = [50, 150];
-  let languages = [];
-  let specializations = [];
-  let lgbtqFriendly = false;
 
   let showMoreFilters = false;
 
@@ -29,34 +20,13 @@
     'Ungarisch',
   ];
 
-  const dropdownHandleChange = (value, type) => {
-    if (type === 'languages') {
-      languages = value;
-    }
-
-    if (type === 'specializations') {
-      specializations = value;
-    }
-
-    if (type === 'gender') {
-      gender = value;
-    }
-  };
-
-  const performSearch = (e) => {
-    e.preventDefault();
-    const params = new URLSearchParams({
-      location,
-      offersFirstConsultation: offersFirstConsultation ? 'true' : 'false',
-      gender: gender.join(','),
-      ageRange: ageRange.join('-'),
-      priceRange: priceRange.join('-'),
-      languages: languages.join(','),
-      specializations: specializations.join(','),
-      lgbtqFriendly: lgbtqFriendly ? 'true' : 'false',
+  const performSearch = () => {
+    let queryString;
+    filters.subscribe((filterState) => {
+      queryString = filtersToQuery(filterState);
     });
 
-    goto(`/search-results?${params.toString()}`);
+    goto(`/search-results?${queryString}`);
   };
 
   const toggleFiltersView = async () => {
@@ -77,7 +47,7 @@
 <section
   class="container mx-auto max-w-[800px] py-12 px-6 border-2 border-gray-300 rounded-lg shadow-lg my-10 bg-white"
 >
-  <form on:submit={performSearch} class="grid gap-6">
+  <form on:submit|preventDefault={performSearch} class="grid gap-6">
     <div class="grid sm:grid-cols-2 gap-4">
       <div>
         <label for="location" class="block font-medium text-gray-700"
@@ -86,7 +56,7 @@
         <input
           id="location"
           type="text"
-          bind:value={location}
+          bind:value={$filters.location}
           class="w-full max-w-[200px] border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
         />
       </div>
@@ -104,7 +74,7 @@
               min="30"
               max="200"
               step="5"
-              bind:value={priceRange[0]}
+              bind:value={$filters.priceRange[0]}
               class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
               placeholder="Von"
             />
@@ -116,7 +86,7 @@
               min="30"
               max="200"
               step="5"
-              bind:value={priceRange[1]}
+              bind:value={$filters.priceRange[1]}
               class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
               placeholder="Bis"
             />
@@ -126,7 +96,7 @@
           <input
             id="offersFirstConsultation"
             type="checkbox"
-            bind:checked={offersFirstConsultation}
+            bind:checked={$filters.offersFirstConsultation}
             class="mr-2"
           />
           <label for="offersFirstConsultation" class="font-medium text-gray-700"
@@ -145,7 +115,7 @@
           <Dropdown
             id="gender"
             onChange={dropdownHandleChange}
-            selected={gender}
+            selected={$filters.gender}
             placeholder="Geschlecht auswählen"
             multiSelect={true}
             type="gender"
@@ -163,7 +133,7 @@
               min="18"
               max="80"
               step="1"
-              bind:value={ageRange[0]}
+              bind:value={$filters.ageRange[0]}
               class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
               placeholder="Von"
             />
@@ -175,7 +145,7 @@
               min="18"
               max="80"
               step="1"
-              bind:value={ageRange[1]}
+              bind:value={$filters.ageRange[1]}
               class="w-full border-2 border-gray-300 p-2 rounded-md focus:ring focus:ring-orange-500"
               placeholder="Bis"
             />
@@ -190,7 +160,7 @@
             id="languages"
             onChange={dropdownHandleChange}
             options={[...topLanguages, ...languageOptions]}
-            selected={languages}
+            selected={$filters.languages}
             placeholder="Sprachen auswählen"
             multiSelect={true}
             type="languages"
@@ -205,7 +175,7 @@
             id="specializations"
             onChange={dropdownHandleChange}
             options={Object.keys(specializationOptions)}
-            selected={specializations}
+            selected={$filters.specializations}
             placeholder="Schwerpunkt auswählen"
             multiSelect={true}
             type="specializations"
@@ -216,7 +186,7 @@
           <input
             id="lgbtqFriendly"
             type="checkbox"
-            bind:checked={lgbtqFriendly}
+            bind:checked={$filters.lgbtqFriendly}
             class="mr-2"
           />
           <label for="lgbtqFriendly" class="font-medium text-gray-700"
