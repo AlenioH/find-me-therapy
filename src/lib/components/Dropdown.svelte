@@ -84,7 +84,7 @@
               type="checkbox"
               class="mr-2"
               checked={selected.includes(option)}
-              on:click={(e) => e.stopPropagation()}
+              on:click|stopPropagation
             />
           {/if}
           <span>{option.replaceAll('_', ' ')}</span>
