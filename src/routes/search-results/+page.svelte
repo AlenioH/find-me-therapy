@@ -30,11 +30,16 @@
 
   const applyReset = () => {
     resetFilters();
-    performSearch()
+    performSearch();
   };
 
   // when filters change, update the URL (which will trigger a new server load)
   const performSearch = () => {
+    // Ensure that any empty values have defaults set
+    if (!$filters.ageRange[0]) $filters.ageRange[0] = 18;
+    if (!$filters.ageRange[1]) $filters.ageRange[1] = 80;
+    if (!$filters.priceRange[0]) $filters.priceRange[0] = 50;
+    if (!$filters.priceRange[1]) $filters.priceRange[1] = 150;
     let queryString;
     filters.subscribe((filterState) => {
       queryString = filtersToQuery(filterState);
