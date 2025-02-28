@@ -1,13 +1,19 @@
 <script>
   import { page } from '$app/stores';
-  import { filters, queryToFilters, dropdownHandleChange } from '$lib/filters';
+  import {
+    filters,
+    queryToFilters,
+    filtersToQuery,
+    dropdownHandleChange,
+    resetFilters,
+  } from '$lib/filters';
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
   import Dropdown from '$lib/components/Dropdown.svelte';
 
   export let data;
 
-  const therapists = data.therapists;
-
+  $: therapists = data.therapists;
   $: filters.set(queryToFilters($page.url.searchParams.toString()));
 
   let specializationOptions = data.specializations;
@@ -22,20 +28,14 @@
     'Ungarisch',
   ];
 
-  const performSearch = (e) => {
-    e.preventDefault();
-    const params = new URLSearchParams({
-      location,
-      offersFirstConsultation: offersFirstConsultation ? 'true' : 'false',
-      gender: gender.join(','),
-      ageRange: ageRange.join('-'),
-      priceRange: priceRange.join('-'),
-      languages: languages.join(','),
-      specializations: specializations.join(','),
-      lgbtqFriendly: lgbtqFriendly ? 'true' : 'false',
+  // when filters change, update the URL (which will trigger a new server load)
+  const performSearch = () => {
+    let queryString;
+    filters.subscribe((filterState) => {
+      queryString = filtersToQuery(filterState);
     });
 
-    goto(`/search-results?${params.toString()}`);
+    goto(`/search-results?${queryString}`);
   };
 
   // Function to generate a dummy "next possible appointment" date (e.g., next week)
@@ -58,7 +58,11 @@
 </script>
 
 <div class="flex">
-  <div class="w-64 bg-orange-100 p-6 hidden lg:block">
+  <form
+    on:submit|preventDefault={performSearch}
+    on:reset={resetFilters}
+    class="w-64 bg-orange-100 p-6 hidden lg:block"
+  >
     <h3 class="text-xl font-bold text-orange-600 mb-4">Filter</h3>
     <div class="mb-4">
       <label for="location" class="block font-medium text-gray-700"
@@ -198,8 +202,8 @@
     </div>
 
     <button
-      on:click={performSearch}
-      class="bg-yellow-500 text-black font-bold py-2 px-4 rounded-full hover:bg-yellow-400 transition-colors w-full"
+      type="submit"
+      class="bg-yellow-500 text-black font-bold py-2 px-4 rounded-full hover:bg-yellow-400 transition-all w-full shadow-md hover:shadow-lg"
     >
       Filter anwenden
     </button>
