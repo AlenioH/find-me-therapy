@@ -28,6 +28,11 @@
     'Ungarisch',
   ];
 
+  const applyReset = () => {
+    resetFilters();
+    performSearch()
+  };
+
   // when filters change, update the URL (which will trigger a new server load)
   const performSearch = () => {
     let queryString;
@@ -60,7 +65,7 @@
 <div class="flex">
   <form
     on:submit|preventDefault={performSearch}
-    on:reset={resetFilters}
+    on:reset={applyReset}
     class="w-64 bg-orange-100 p-6 hidden lg:block"
   >
     <h3 class="text-xl font-bold text-orange-600 mb-4">Filter</h3>
@@ -207,7 +212,13 @@
     >
       Filter anwenden
     </button>
-  </div>
+    <button
+      type="reset"
+      class="bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-all w-full mt-2 shadow-md hover:shadow-lg"
+    >
+      Filter löschen
+    </button>
+  </form>
   <section class="flex-1 p-4">
     <h2 class="text-3xl font-bold mb-6 text-center text-orange-600">
       Suchergebnisse für Therapeuten

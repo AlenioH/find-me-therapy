@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 // Store for selected filters (reactive state)
 export const filters = writable({
@@ -11,6 +11,16 @@ export const filters = writable({
   specializations: [],
   lgbtqFriendly: false,
 });
+
+export const initialFilters = get(filters);
+
+/**
+ * Resets filters to the initial state
+ */
+export function resetFilters() {
+  filters.set({ ...initialFilters });
+}
+
 
 /**
  * Handles custom dropdown changes for languages, specializations, and gender
