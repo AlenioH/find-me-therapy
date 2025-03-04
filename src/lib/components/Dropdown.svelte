@@ -11,12 +11,37 @@
 
   let isOpen = false;
   let activeDropdown = null;
+  let sortedOptions = [...options]; // keep initial order
 
   const toggleDropdown = (name) => {
     activeDropdown = activeDropdown === name ? null : name;
+
+    // reorder items **only when opening** the dropdown and for specific types
+
+    // remove duplicates and reorder (duplicates because of top languages)
+    if (activeDropdown && type === 'languages') {
+      let uniqueOptions = Array.from(new Set(options));
+      sortedOptions = Array.from(
+        new Set([
+          ...selected, // selected items first
+          ...uniqueOptions.filter((option) => !selected.includes(option)), // remove duplicates before merging
+        ])
+      );
+    }
+
+    if (activeDropdown && type === 'specializations') {
+      sortedOptions = [
+        ...options.filter((option) =>
+          multiSelect ? selected.includes(option) : selected === option
+        ),
+        ...options.filter((option) =>
+          multiSelect ? !selected.includes(option) : selected !== option
+        ),
+      ];
+    }
   };
 
-  function selectOption(option) {
+  const selectOption = (option) => {
     if (multiSelect) {
       let updatedSelection = selected.includes(option)
         ? selected.filter((item) => item !== option)
@@ -26,7 +51,7 @@
       onChange(option, type);
       isOpen = false;
     }
-  }
+  };
 </script>
 
 <div class="relative w-full">
@@ -68,7 +93,7 @@
         excludeSelector: `#${type}-dropdown-button`,
       }}
     >
-      {#each options as option}
+      {#each sortedOptions as option}
         <button
           type="button"
           class="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-100"
