@@ -23,6 +23,8 @@ model users {
   updatedAt     DateTime @updatedAt
   clients       clients?
   therapist     therapists?
+  isVerified        Boolean @default(false)
+  verificationToken String?
 }
 
 model clients {
