@@ -24,7 +24,7 @@ model users {
   clients       clients?
   therapist     therapists?
   isVerified        Boolean @default(false)
-  verificationToken String?
+  verificationToken String? @unique
 }
 
 model clients {
