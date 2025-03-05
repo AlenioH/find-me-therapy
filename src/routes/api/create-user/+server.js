@@ -1,3 +1,5 @@
+import { sendEmail } from '$lib/server/email';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -32,6 +34,9 @@ export async function POST({ request, cookies }) {
 
     const { email, password, name, role } = fields;
 
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+
     let newUser;
     newUser = await prisma.users.create({
       data: {
@@ -39,6 +44,8 @@ export async function POST({ request, cookies }) {
         passwordHash: password,
         name,
         role,
+        isVerified: false,
+        verificationToken,
       },
     });
     if (role === 'therapist') {
@@ -58,6 +65,10 @@ export async function POST({ request, cookies }) {
       secure: true,
     });
 
+
+
+    const verificationLink = `http://localhost:5173/api/verify-email?token=${verificationToken}`;
+    await sendEmail(email, 'Verify Your Account', `Click this link to verify: ${verificationLink}`);
     return new Response(JSON.stringify(newUser), { status: 201 });
   } catch (error) {
     console.error('Error creating user:', error);
