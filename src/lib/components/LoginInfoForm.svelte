@@ -39,7 +39,7 @@
   const validatePassword = (password) => {
     // password must be at least 8 characters long, with at least 1 uppercase letter, 1 lowercase letter, and 1 special character
     const re =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_])[A-Za-z\d!@#$%^&*_]{8,}$/;
     return re.test(password);
   };
 
