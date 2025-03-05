@@ -13,13 +13,20 @@ export async function POST({ request, cookies }) {
     });
 
     if (!user) {
-      throw new Error('Invalid email.');
+      return json({ error: 'Invalid email or password' }, { status: 401 });
+    }
+
+    if (!user.isVerified) {
+      return json(
+        { error: 'Email not verified. Please check your inbox.' },
+        { status: 403 }
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!isMatch) {
-      throw new Error('Invalid password.');
+      return json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     // fetch role-specific information
@@ -59,7 +66,9 @@ export async function POST({ request, cookies }) {
     );
   } catch (error) {
     console.error('Error during login:', error);
-    return new Response(JSON.stringify({ error: 'Error during login.' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Error during login.' }), {
+      status: 500,
+    });
   }
 }
 //TODO: JWT SECRET
