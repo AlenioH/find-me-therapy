@@ -68,7 +68,7 @@ export async function POST({ request, cookies }) {
 
 
     const verificationLink = `http://localhost:5173/api/verify-email?token=${verificationToken}`;
-    await sendEmail(email, 'Verify Your Account', `Click this link to verify: ${verificationLink}`);
+    await sendEmail(email, 'Verifiziere deine E-Mail-Adresse', `Klicke auf diesen Link, um deine E-Mail zu verifizieren: ${verificationLink}`);
     return new Response(JSON.stringify(newUser), { status: 201 });
   } catch (error) {
     console.error('Error creating user:', error);

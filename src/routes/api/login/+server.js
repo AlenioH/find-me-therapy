@@ -13,20 +13,18 @@ export async function POST({ request, cookies }) {
     });
 
     if (!user) {
-      return json({ error: 'Invalid email or password' }, { status: 401 });
+      return new Response(JSON.stringify({ error: 'Ungültige E-Mail oder Passwort' }), { status: 401 });
     }
 
+
     if (!user.isVerified) {
-      return json(
-        { error: 'Email not verified. Please check your inbox.' },
-        { status: 403 }
-      );
+      return new Response(JSON.stringify({ error: 'E-Mail nicht verifiziert. Bitte überprüfe dein Postfach.' }), { status: 401 });
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!isMatch) {
-      return json({ error: 'Invalid email or password' }, { status: 401 });
+      return new Response(JSON.stringify({ error: 'Ungültige E-Mail oder Passwort' }), { status: 401 });
     }
 
     // fetch role-specific information
@@ -65,8 +63,8 @@ export async function POST({ request, cookies }) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error during login:', error);
-    return new Response(JSON.stringify({ error: 'Error during login.' }), {
+    console.error('Fehler bei der Anmeldung:', error);
+    return new Response(JSON.stringify({ error: 'Fehler bei der Anmeldung.' }), {
       status: 500,
     });
   }

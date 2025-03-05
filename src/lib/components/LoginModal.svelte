@@ -5,9 +5,12 @@
 
   export let showModal = false;
   export let closeModal = () => {};
-  export let title = 'Modal Title';
+  export let title = 'Login';
   // @ts-ignore
   let formComponent;
+  let successMessage = '';
+  let errorMessage = '';
+  let showResend = false;
 
   let userInfo = {
     name: '',
@@ -58,6 +61,10 @@
         updateUser(data);
 
         goto('/my-profile');
+      } else {
+        const data = await response.json();
+        errorMessage = data.error;
+        showResend = data.error.includes('E-Mail nicht verifiziert');
       }
 
       if (!response.ok) {
@@ -65,9 +72,39 @@
         throw new Error(error.error);
       }
 
-      console.log('Login successful');
+      console.log('Anmeldung erfolgreich');
     } catch (error) {
-      console.error('Login failed:', error.message);
+      console.error('Anmeldung fehlgeschlagen:', error.message);
+    }
+  };
+
+  const resendVerification = async () => {
+    try {
+      const res = await fetch('/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userInfo.email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        successMessage =
+          data.message || 'Verifizierungs-E-Mail wurde erneut gesendet.';
+        errorMessage = '';
+      } else {
+        successMessage = '';
+        errorMessage =
+          data.error ||
+          'Fehler beim erneuten Senden der Verifizierungs-E-Mail.';
+      }
+    } catch (error) {
+      console.error(
+        'Fehler beim erneuten Senden der Verifizierungs-E-Mail:',
+        error
+      );
+      successMessage = '';
+      errorMessage = 'Fehler beim erneuten Senden der Verifizierungs-E-Mail.';
     }
   };
 </script>
@@ -98,6 +135,22 @@
         buttonText="Login"
         formType={'login'}
       />
+      {#if successMessage}
+        <p class="text-green-500 text-sm mt-2">{successMessage}</p>
+      {/if}
+
+      {#if errorMessage}
+        <p class="text-red-500 text-sm mt-2">{errorMessage}</p>
+      {/if}
+
+      {#if showResend}
+        <button
+          class="text-blue-500 mt-2 hover:underline"
+          on:click={resendVerification}
+        >
+          Verifizierungs-E-Mail erneut senden
+        </button>
+      {/if}
     </div>
   </div>
 {/if}
