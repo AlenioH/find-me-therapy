@@ -1,5 +1,4 @@
 <script>
-  import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { onClickOutside } from '../../utils/onClickOutside';
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
@@ -8,6 +7,7 @@
 
   export let data;
   const specializations = Object.keys(data.specializations);
+  let isSuccess = false;
 
   const saltRounds = 10; // for bcrypt
   let currentStep = 1;
@@ -178,7 +178,7 @@
     });
     if (response.ok) {
       alert('User created successfully');
-      goto('/signup-success', { replaceState: true });
+      isSuccess = true;
     } else {
       alert('Failed to create user');
     }
@@ -195,335 +195,368 @@
 
 <section class="container mx-auto py-12 px-4 flex justify-center">
   <div class="w-full max-w-lg">
-    <p class="text-sm text-gray-500 mb-6">* Felder sind erforderlich</p>
-
-    {#if currentStep === 1}
-      <h3 class="text-2xl font-bold mb-6">Schritt 1: Login Information</h3>
-      <div class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
-        <LoginInfoForm
-          formType="register"
-          bind:this={formComponent}
-          handleSubmit={nextStep}
-          {userInfo}
-        />
-      </div>
-    {/if}
-
-    {#if currentStep === 2}
-      <h3 class="text-2xl font-bold mb-6">
-        Schritt 2: Persönliche Information
-      </h3>
-      <form
-        bind:this={form}
-        class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
-      >
-        <div class="mb-4">
-          <label for="gender" class="block text-sm font-medium text-gray-700">
-            Geschlecht *
-          </label>
-          <Dropdown
-            id="gender"
-            onChange={dropdownHandleChange}
-            selected={userInfo.gender}
-            placeholder="Geschlecht auswählen"
-            type="gender"
-            options={['männlich', 'weiblich', 'nicht-binär']}
-            {formErrors}
-          />
-        </div>
-
-        <div class="mb-4">
-          <label for="bio" class="block text-sm font-medium text-gray-700">
-            Bio *
-          </label>
-          <textarea
-            id="bio"
-            placeholder="Bio"
-            bind:value={userInfo.bio}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-          ></textarea>
-        </div>
-
-        <div class="mb-4">
-          <label
-            for="languages"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Sprachen *
-          </label>
-          <Dropdown
-            id="languages"
-            onChange={dropdownHandleChange}
-            options={[...topLanguages, ...languages]}
-            selected={selectedLanguages}
-            placeholder="Sprachen auswählen"
-            multiSelect={true}
-            type="languages"
-            {formErrors}
-          />
-        </div>
-        <div class="mb-4">
-          <label for="zipCode" class="block text-sm font-medium text-gray-700">
-            Postleitzahl (PLZ) *
-          </label>
-          <input
-            type="text"
-            id="zipCode"
-            placeholder="PLZ eingeben"
-            bind:value={userInfo.zipCode}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-            on:change={handleZipCodeChange}
-          />
-        </div>
-
-        <div class="mb-4">
-          <label for="city" class="block text-sm font-medium text-gray-700">
-            Stadt *
-          </label>
-          <input
-            type="text"
-            id="city"
-            bind:value={userInfo.city}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div class="mb-4">
-          <label for="state" class="block text-sm font-medium text-gray-700">
-            Bundesland *
-          </label>
-          <input
-            type="text"
-            id="state"
-            bind:value={userInfo.state}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div class="mb-4">
-          <label for="address" class="block text-sm font-medium text-gray-700">
-            Adresse *
-          </label>
-          <input
-            type="text"
-            id="address"
-            autocomplete="street-address"
-            placeholder="Adresse"
-            bind:value={userInfo.address}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div class="mb-4">
-          <label for="phone" class="block text-sm font-medium text-gray-700">
-            Telefonnummer *
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            placeholder="Telefonnummer eingeben"
-            bind:value={userInfo.phone}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div class="mb-4">
-          <label
-            for="birthdate"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Geburtsdatum *
-          </label>
-          <input
-            type="date"
-            id="birthdate"
-            bind:value={userInfo.birthdate}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-      </form>
-    {/if}
-
-    {#if currentStep === 3}
-      <h3 class="text-2xl font-bold mb-6">Schritt 3: Therapie Information</h3>
-      <form
-        bind:this={form}
-        class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
-      >
-        <div class="mb-4">
-          <label
-            for="specializations"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Spezialisierungen *
-          </label>
-          <Dropdown
-            id="specializations"
-            onChange={dropdownHandleChange}
-            options={specializations}
-            selected={selectedSpecializations}
-            placeholder="Spezialisierungen auswählen"
-            multiSelect={true}
-            type="specializations"
-            {formErrors}
-          />
-        </div>
-
-        <div class="mb-4">
-          <label
-            for="costPerSession"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Kosten pro Sitzung (€) *
-          </label>
-          <input
-            type="number"
-            id="costPerSession"
-            placeholder="Kosten pro Sitzung (€)"
-            bind:value={userInfo.costPerSession}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-            step="0.01"
-          />
-        </div>
-
-        <div class="mb-4">
-          <label
-            for="sessionDuration"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Dauer der Sitzung (Minuten) *
-          </label>
-          <input
-            type="number"
-            id="sessionDuration"
-            placeholder="Dauer der Sitzung (Minuten)"
-            bind:value={userInfo.sessionDuration}
-            class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">
-            <input
-              type="checkbox"
-              bind:checked={userInfo.offersFirstConsultation}
-              class="mr-2"
-            />
-            Bietet eine erste Beratung kostenlos an
-          </label>
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">
-            <input
-              type="checkbox"
-              bind:checked={userInfo.lgbtqFriendly}
-              class="mr-2"
-            />
-            LGBTQ+ freundlich
-          </label>
-        </div>
-
-        <div class="mb-4">
-          <label
-            for="profilePicture"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Profilbild hochladen
-          </label>
-          <input
-            type="file"
-            id="profilePicture"
-            accept="image/*"
-            on:change={(e) => (userInfo.profilePicture = e.target.files[0])}
-            class="border w-full p-2 mt-1 rounded-md"
-          />
-          {#if userInfo.profilePicture}
-            <img
-              src={URL.createObjectURL(userInfo.profilePicture)}
-              alt="Profilbild Vorschau"
-              class="w-32 h-32 mt-4 rounded-full"
-            />
-          {/if}
-        </div>
-
-        <div class="mb-4">
-          <label
-            for="profileVideo"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Profilvideo hochladen
-          </label>
-          <input
-            type="file"
-            id="profileVideo"
-            accept="video/*"
-            on:change={(e) => (userInfo.profileVideo = e.target.files[0])}
-            class="border w-full p-2 mt-1 rounded-md"
-          />
-        </div>
-
-        <div class="mb-4">
-          <label
-            for="qualificationsPdf"
-            class="block text-sm font-medium text-gray-700"
-          >
-            Qualifikationen (PDF) *
-          </label>
-          <input
-            type="file"
-            id="qualificationsPdf"
-            accept=".pdf"
-            on:change={(e) => (userInfo.qualificationsPdf = e.target.files[0])}
-            class="border w-full p-2 mt-1 rounded-md"
-            required
-          />
-          {#if userInfo.qualificationsPdf}
-            <p class="mt-2 text-sm text-gray-500">
-              Hochgeladene Datei: {userInfo.qualificationsPdf.name}
-            </p>
-          {/if}
-        </div>
-      </form>
-    {/if}
-
-    <div class="mt-8">
-      {#if currentStep > 1}
+    {#if isSuccess}
+      <!-- Show Success Component with Resend Button -->
+      <div class="text-center">
+        <div class="text-6xl text-orange-500 mb-6 animate-bounce">🎉</div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">
+          Danke für deine Anmeldung!
+        </h1>
+        <p class="text-lg text-gray-600">
+          Um fortzufahren, musst du deine E-Mail-Adresse verifizieren. Wir haben
+          dir eine Bestätigungs-E-Mail gesendet. Bitte überprüfe deinen
+          Posteingang, auch deinen Spam-Ordner, falls du sie nicht siehst. Falls
+          du die E-Mail nicht findest, kannst du auf „Erneut senden“ klicken, um
+          die E-Mail erneut zu erhalten.
+          <br />
+          Sobald du die E-Mail verifiziert hast, werden wir dein Profil überprüfen
+          und uns in Kürze bei dir melden.
+        </p>
         <button
-          on:click={prevStep}
-          class="bg-gray-300 text-black py-2 px-6 rounded-lg hover:bg-gray-200"
+          on:click={() => (isSuccess = false)}
+          class="mt-4 bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400"
         >
-          Zurück
+          Erneut senden
         </button>
+      </div>
+    {:else}
+      <p class="text-sm text-gray-500 mb-6">* Felder sind erforderlich</p>
+
+      {#if currentStep === 1}
+        <h3 class="text-2xl font-bold mb-6">Schritt 1: Login Information</h3>
+        <div class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white">
+          <LoginInfoForm
+            formType="register"
+            bind:this={formComponent}
+            handleSubmit={nextStep}
+            {userInfo}
+          />
+        </div>
       {/if}
 
-      {#if currentStep < 3}
-        <button
-          on:click={nextStep}
-          class="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400 ml-4"
+      {#if currentStep === 2}
+        <h3 class="text-2xl font-bold mb-6">
+          Schritt 2: Persönliche Information
+        </h3>
+        <form
+          bind:this={form}
+          class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
         >
-          Weiter
-        </button>
+          <div class="mb-4">
+            <label for="gender" class="block text-sm font-medium text-gray-700">
+              Geschlecht *
+            </label>
+            <Dropdown
+              id="gender"
+              onChange={dropdownHandleChange}
+              selected={userInfo.gender}
+              placeholder="Geschlecht auswählen"
+              type="gender"
+              options={['männlich', 'weiblich', 'nicht-binär']}
+              {formErrors}
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="bio" class="block text-sm font-medium text-gray-700">
+              Bio *
+            </label>
+            <textarea
+              id="bio"
+              placeholder="Bio"
+              bind:value={userInfo.bio}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+            ></textarea>
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="languages"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Sprachen *
+            </label>
+            <Dropdown
+              id="languages"
+              onChange={dropdownHandleChange}
+              options={[...topLanguages, ...languages]}
+              selected={selectedLanguages}
+              placeholder="Sprachen auswählen"
+              multiSelect={true}
+              type="languages"
+              {formErrors}
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="zipCode"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Postleitzahl (PLZ) *
+            </label>
+            <input
+              type="text"
+              id="zipCode"
+              placeholder="PLZ eingeben"
+              bind:value={userInfo.zipCode}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+              on:change={handleZipCodeChange}
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="city" class="block text-sm font-medium text-gray-700">
+              Stadt *
+            </label>
+            <input
+              type="text"
+              id="city"
+              bind:value={userInfo.city}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="state" class="block text-sm font-medium text-gray-700">
+              Bundesland *
+            </label>
+            <input
+              type="text"
+              id="state"
+              bind:value={userInfo.state}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="address"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Adresse *
+            </label>
+            <input
+              type="text"
+              id="address"
+              autocomplete="street-address"
+              placeholder="Adresse"
+              bind:value={userInfo.address}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="phone" class="block text-sm font-medium text-gray-700">
+              Telefonnummer *
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              placeholder="Telefonnummer eingeben"
+              bind:value={userInfo.phone}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="birthdate"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Geburtsdatum *
+            </label>
+            <input
+              type="date"
+              id="birthdate"
+              bind:value={userInfo.birthdate}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+            />
+          </div>
+        </form>
       {/if}
 
       {#if currentStep === 3}
-        <button
-          type="submit"
-          on:click={handleSubmit}
-          class="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400 ml-4"
+        <h3 class="text-2xl font-bold mb-6">Schritt 3: Therapie Information</h3>
+        <form
+          bind:this={form}
+          class="border border-gray-300 p-6 rounded-lg shadow-sm bg-white"
         >
-          Absenden
-        </button>
+          <div class="mb-4">
+            <label
+              for="specializations"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Spezialisierungen *
+            </label>
+            <Dropdown
+              id="specializations"
+              onChange={dropdownHandleChange}
+              options={specializations}
+              selected={selectedSpecializations}
+              placeholder="Spezialisierungen auswählen"
+              multiSelect={true}
+              type="specializations"
+              {formErrors}
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="costPerSession"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Kosten pro Sitzung (€) *
+            </label>
+            <input
+              type="number"
+              id="costPerSession"
+              placeholder="Kosten pro Sitzung (€)"
+              bind:value={userInfo.costPerSession}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+              step="0.01"
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="sessionDuration"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Dauer der Sitzung (Minuten) *
+            </label>
+            <input
+              type="number"
+              id="sessionDuration"
+              placeholder="Dauer der Sitzung (Minuten)"
+              bind:value={userInfo.sessionDuration}
+              class="border w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-orange-500"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">
+              <input
+                type="checkbox"
+                bind:checked={userInfo.offersFirstConsultation}
+                class="mr-2"
+              />
+              Bietet eine erste Beratung kostenlos an
+            </label>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">
+              <input
+                type="checkbox"
+                bind:checked={userInfo.lgbtqFriendly}
+                class="mr-2"
+              />
+              LGBTQ+ freundlich
+            </label>
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="profilePicture"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Profilbild hochladen
+            </label>
+            <input
+              type="file"
+              id="profilePicture"
+              accept="image/*"
+              on:change={(e) => (userInfo.profilePicture = e.target.files[0])}
+              class="border w-full p-2 mt-1 rounded-md"
+            />
+            {#if userInfo.profilePicture}
+              <img
+                src={URL.createObjectURL(userInfo.profilePicture)}
+                alt="Profilbild Vorschau"
+                class="w-32 h-32 mt-4 rounded-full"
+              />
+            {/if}
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="profileVideo"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Profilvideo hochladen
+            </label>
+            <input
+              type="file"
+              id="profileVideo"
+              accept="video/*"
+              on:change={(e) => (userInfo.profileVideo = e.target.files[0])}
+              class="border w-full p-2 mt-1 rounded-md"
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="qualificationsPdf"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Qualifikationen (PDF) *
+            </label>
+            <input
+              type="file"
+              id="qualificationsPdf"
+              accept=".pdf"
+              on:change={(e) =>
+                (userInfo.qualificationsPdf = e.target.files[0])}
+              class="border w-full p-2 mt-1 rounded-md"
+              required
+            />
+            {#if userInfo.qualificationsPdf}
+              <p class="mt-2 text-sm text-gray-500">
+                Hochgeladene Datei: {userInfo.qualificationsPdf.name}
+              </p>
+            {/if}
+          </div>
+        </form>
       {/if}
-    </div>
+
+      <div class="mt-8">
+        {#if currentStep > 1}
+          <button
+            on:click={prevStep}
+            class="bg-gray-300 text-black py-2 px-6 rounded-lg hover:bg-gray-200"
+          >
+            Zurück
+          </button>
+        {/if}
+
+        {#if currentStep < 3}
+          <button
+            on:click={nextStep}
+            class="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400 ml-4"
+          >
+            Weiter
+          </button>
+        {/if}
+
+        {#if currentStep === 3}
+          <button
+            type="submit"
+            on:click={handleSubmit}
+            class="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400 ml-4"
+          >
+            Absenden
+          </button>
+        {/if}
+      </div>
+    {/if}
   </div>
 </section>
