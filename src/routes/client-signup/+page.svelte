@@ -61,8 +61,6 @@
 </script>
 
 <div class="max-w-lg mx-auto mt-6 p-6 bg-white rounded-lg shadow-md">
-  <h2 class="text-2xl font-bold mb-4 text-center">Registrieren</h2>
-
   {#if isSuccess}
     <div class="text-center">
       <div class="text-6xl text-orange-500 mb-6 animate-bounce">🎉</div>
@@ -85,6 +83,7 @@
       </button>
     </div>
   {:else}
+    <h2 class="text-2xl font-bold mb-4 text-center">Registrieren</h2>
     <LoginInfoForm
       bind:this={formComponent}
       {userInfo}
