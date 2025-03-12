@@ -1,12 +1,13 @@
 <script>
   import { goto } from '$app/navigation';
+  import { resendVerification } from '../../utils/resendVerification';
   import { updateUser } from '$lib/stores';
   import LoginInfoForm from './LoginInfoForm.svelte';
 
   export let showModal = false;
   export let closeModal = () => {};
   export let title = 'Login';
-  // @ts-ignore
+
   let formComponent;
   let successMessage = '';
   let errorMessage = '';
@@ -26,8 +27,6 @@
   };
 
   const clearForm = () => {
-    // formElement.reset();
-    // @ts-ignore
     formComponent.triggerReset();
   };
 
@@ -78,34 +77,11 @@
     }
   };
 
-  const resendVerification = async () => {
-    try {
-      const res = await fetch('/api/resend-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userInfo.email }),
-      });
+  const resendEmail = async () => {
+    const { message, error } = await resendVerification(userInfo.email);
 
-      const data = await res.json();
-
-      if (res.ok) {
-        successMessage =
-          data.message || 'Verifizierungs-E-Mail wurde erneut gesendet.';
-        errorMessage = '';
-      } else {
-        successMessage = '';
-        errorMessage =
-          data.error ||
-          'Fehler beim erneuten Senden der Verifizierungs-E-Mail.';
-      }
-    } catch (error) {
-      console.error(
-        'Fehler beim erneuten Senden der Verifizierungs-E-Mail:',
-        error
-      );
-      successMessage = '';
-      errorMessage = 'Fehler beim erneuten Senden der Verifizierungs-E-Mail.';
-    }
+    successMessage = message || '';
+    errorMessage = error || '';
   };
 </script>
 
@@ -146,7 +122,7 @@
       {#if showResend}
         <button
           class="text-blue-500 mt-2 hover:underline"
-          on:click={resendVerification}
+          on:click={resendEmail}
         >
           Verifizierungs-E-Mail erneut senden
         </button>

@@ -4,6 +4,8 @@
   import LoginInfoForm from '$lib/components/LoginInfoForm.svelte';
   import Dropdown from '$lib/components/Dropdown.svelte';
   import bcrypt from 'bcryptjs';
+  import SuccessMessage from '$lib/components/SuccessMessage.svelte';
+  import { user } from '$lib/stores';
 
   export let data;
   const specializations = Object.keys(data.specializations);
@@ -196,29 +198,7 @@
 <section class="container mx-auto py-12 px-4 flex justify-center">
   <div class="w-full max-w-lg">
     {#if isSuccess}
-      <!-- Show Success Component with Resend Button -->
-      <div class="text-center">
-        <div class="text-6xl text-orange-500 mb-6 animate-bounce">🎉</div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">
-          Danke für deine Anmeldung!
-        </h1>
-        <p class="text-lg text-gray-600">
-          Um fortzufahren, musst du deine E-Mail-Adresse verifizieren. Wir haben
-          dir eine Bestätigungs-E-Mail gesendet. Bitte überprüfe deinen
-          Posteingang, auch deinen Spam-Ordner, falls du sie nicht siehst. Falls
-          du die E-Mail nicht findest, kannst du auf „Erneut senden“ klicken, um
-          die E-Mail erneut zu erhalten.
-          <br />
-          Sobald du die E-Mail verifiziert hast, werden wir dein Profil überprüfen
-          und uns in Kürze bei dir melden.
-        </p>
-        <button
-          on:click={() => (isSuccess = false)}
-          class="mt-4 bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-400"
-        >
-          Erneut senden
-        </button>
-      </div>
+      <SuccessMessage role="therapist" email={userInfo.email}/>
     {:else}
       <p class="text-sm text-gray-500 mb-6">* Felder sind erforderlich</p>
 
