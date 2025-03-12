@@ -25,7 +25,7 @@ export async function POST({ request }) {
       data: { verificationToken },
     });
 
-    const verificationLink = `http://localhost:5173/api/verify-email?token=${verificationToken}`;
+    const verificationLink = `http://localhost:5173/verify-email?token=${verificationToken}`;
     await sendEmail(
       user.email,
       'Verifiziere deine E-Mail-Adresse',
