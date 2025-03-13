@@ -1,5 +1,4 @@
 <script>
-
   let email = '';
   let successMessage = '';
   let errorMessage = '';
@@ -8,10 +7,13 @@
 
   const handleClose = () => {
     closeModal();
+    successMessage = '';
+    errorMessage = '';
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
+    successMessage = '';
+    errorMessage = '';
 
     try {
       const response = await fetch('/api/forgot-password', {
@@ -22,13 +24,16 @@
 
       const data = await response.json();
 
-      if (response.ok) {
-        successMessage = data.message;
-        errorMessage = '';
-      } else {
-        successMessage = '';
+      if (!response.ok) {
+        throw new Error(
+          data.error || 'Fehler beim Zurücksetzen des Passworts.'
+        );
+      }
+
+      if (data.status >= 400) {
         errorMessage = data.error || 'Fehler beim Zurücksetzen des Passworts.';
       }
+      successMessage = data.message;
     } catch (error) {
       errorMessage = 'Ein unerwarteter Fehler ist aufgetreten.';
     }
@@ -50,7 +55,7 @@
       Passworts zu erhalten.
     </p>
 
-    <form on:submit={handleSubmit}>
+    <form on:submit|preventDefault={handleSubmit}>
       <input
         type="email"
         placeholder="E-Mail-Adresse"

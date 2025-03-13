@@ -1,6 +1,7 @@
 import prisma from '$lib/prisma';
 import crypto from 'crypto';
 import { sendEmail } from '$lib/server/email';
+import { error } from 'console';
 
 export async function POST({ request }) {
   try {
@@ -11,9 +12,25 @@ export async function POST({ request }) {
     });
 
     if (!user) {
-      return new Response('Benutzer nicht gefunden', { status: 404 });
+      return new Response(
+        JSON.stringify({
+          error: 'Benutzer nicht gefunden',
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
     }
 
+    if (!user.verified) {
+      return new Response(
+        JSON.stringify({
+          error:
+            'Bitte verifiziere zuerst dein Konto. Überprüfe dein E-Mail-Postfach (und den Spam-Ordner) für den Bestätigungslink.',
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+    }
     const resetToken = crypto.randomBytes(32).toString('hex');
     const resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 30); // valid for 30 min
 
@@ -35,6 +52,8 @@ export async function POST({ request }) {
     );
   } catch (error) {
     console.error('Fehler beim Zurücksetzen des Passworts:', error);
-    return new Response('Fehler beim Senden der E-Mail.', { status: 500 });
+    return new Response(
+      JSON.stringify({ error: 'Fehler beim Senden der E-Mail.', status: 500 })
+    );
   }
 }
