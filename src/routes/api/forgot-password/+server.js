@@ -21,7 +21,7 @@ export async function POST({ request }) {
       );
     }
 
-    if (!user.verified) {
+    if (!user.isVerified) {
       return new Response(
         JSON.stringify({
           error:
