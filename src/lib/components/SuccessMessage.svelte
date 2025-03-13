@@ -1,5 +1,5 @@
 <script>
-  import { resendVerification } from '../../utils/resendVerification';
+  import { resendVerificationEmail } from '../../utils/resendVerification';
   export let role;
   export let email;
 

@@ -3,9 +3,10 @@
   import { goto } from '$app/navigation';
   import { writable } from 'svelte/store';
   import { fly } from 'svelte/transition';
-  import { updateUser, user as userStore } from '$lib/stores';
-  import Modal from '$lib/components/LoginModal.svelte';
   import { page } from '$app/state';
+  import { updateUser, user as userStore, activeModal } from '$lib/stores';
+  import LoginModal from '$lib/components/LoginModal.svelte';
+  import ForgotPasswordModal from '$lib/components/ForgotPasswordModal.svelte';
 
   export let data;
 
@@ -20,9 +21,6 @@
   };
   // USER FROM JWT TOKEN
   const user = data.user || defaultUser;
-
-  // store to control the visibility of the modals
-  const showLoginModal = writable(false);
 
   async function logout() {
     const response = await fetch('/api/logout', {
@@ -47,8 +45,8 @@
 
   $: userStore.set(user);
   // functions to open and close the modals
-  const openLoginModal = () => showLoginModal.set(true);
-  const closeLoginModal = () => showLoginModal.set(false);
+  const openLoginModal = () => activeModal.set('login');
+  const closeModal = () => activeModal.set(null);
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -102,7 +100,10 @@
 
   <main class="flex-grow">
     {#key page.url.pathname}
-      <div in:fly={{ y: 10, duration: 200 }} out:fly={{ y: -10, duration: 200 }}>
+      <div
+        in:fly={{ y: 10, duration: 200 }}
+        out:fly={{ y: -10, duration: 200 }}
+      >
         <slot />
       </div>
     {/key}
@@ -112,9 +113,10 @@
     <p>&copy; 2025 FindMeTherapy. All rights reserved.</p>
   </footer>
 
-  <Modal
-    showModal={$showLoginModal}
-    closeModal={closeLoginModal}
-    title="Anmelden"
-  />
+  {#if $activeModal === 'login'}
+    <LoginModal {closeModal} title="Anmelden" />
+  {/if}
+  {#if $activeModal === 'forgotPassword'}
+    <ForgotPasswordModal {closeModal} title="Passwort vergessen" />
+  {/if}
 </div>

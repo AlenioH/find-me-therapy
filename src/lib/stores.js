@@ -26,3 +26,7 @@ export function updateUserNews(news, status = 'pending', updatedAt = new Date().
     },
   }));
 }
+
+
+
+export const activeModal = writable(null); // null, 'login', 'forgotPassword'

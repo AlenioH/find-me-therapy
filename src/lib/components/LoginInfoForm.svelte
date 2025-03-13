@@ -1,9 +1,10 @@
 <script>
+  import { activeModal } from "$lib/stores";
   export let buttonText = '';
   export let handleSubmit;
   export let userInfo;
   export let formType;
-  // @ts-ignore
+
   let formElement;
 
   let errors = {
@@ -15,6 +16,7 @@
 
   let showPassword = false;
   let showConfirmPassword = false;
+  let showForgotPassword = false;
 
   const validate = () => {
     errors = {
@@ -122,6 +124,11 @@
     {#if errors.password}
       <p class="text-red-500 text-sm">{errors.password}</p>
     {/if}
+    <p class="text-sm text-gray-600 mt-2">
+      <button class="text-blue-500 hover:underline" on:click={() => {activeModal.set('forgotPassword')}}>
+        Passwort vergessen?
+      </button>
+    </p>
   </div>
 
   {#if formType !== 'login'}
