@@ -1,18 +1,17 @@
 <script>
-  import { writable } from 'svelte/store';
   import LoginModal from '$lib/components/LoginModal.svelte';
   import Layout from '../+layout.svelte';
+  import { activeModal } from '$lib/stores';
 
   export let data;
 
-  const showLoginModal = writable(false);
-
-  const openLoginModal = () => showLoginModal.set(true);
-  const closeLoginModal = () => showLoginModal.set(false);
+  const openLoginModal = () => {
+    activeModal.set('login');
+  };
 </script>
 
 <section
-  class="flex flex-col items-center bg-white p-6 rounded-lg shadow-lg max-w-lg mx-auto text-center"
+  class="flex flex-col items-center bg-white p-6 rounded-lg shadow-lg max-w-lg mx-auto text-center mt-5"
 >
   <h1 class="text-2xl font-bold text-gray-800 mb-4">{data.message}</h1>
 
@@ -25,9 +24,3 @@
     </button>
   {/if}
 </section>
-
-<LoginModal
-  showModal={$showLoginModal}
-  closeModal={closeLoginModal}
-  title="Anmelden"
-/>
