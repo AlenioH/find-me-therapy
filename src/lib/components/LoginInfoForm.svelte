@@ -1,5 +1,6 @@
 <script>
-  import { activeModal } from "$lib/stores";
+  import { activeModal, user } from '$lib/stores';
+  import PasswordInputs from './PasswordInputs.svelte';
   export let buttonText = '';
   export let handleSubmit;
   export let userInfo;
@@ -14,11 +15,8 @@
     name: '',
   };
 
-  let showPassword = false;
-  let showConfirmPassword = false;
-  let showForgotPassword = false;
-
   const validate = () => {
+    errors = { ...errors }; // Trigger reactivity
     errors = {
       email: validateEmail(userInfo.email) ? '' : 'Invalid email format',
       password: validatePassword(userInfo.password)
@@ -52,13 +50,8 @@
 
   //expose the reset method to the parent
   export const triggerReset = () => {
-    // @ts-ignore
     formElement.reset();
   };
-
-  $: if (showPassword) {
-    setTimeout(() => (showPassword = false), 5000); // auto-hide after 5 seconds
-  }
 </script>
 
 <form bind:this={formElement} on:submit={handleSubmit}>
@@ -96,73 +89,12 @@
     {/if}
   </div>
 
-  <div class="mb-4 relative">
-    <label for="password" class="block text-sm font-medium text-gray-700"
-      >Password</label
-    >
-    <input
-      type={showPassword ? 'text' : 'password'}
-      id="password"
-      bind:value={userInfo.password}
-      class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 pr-10"
-      required
-      on:copy|preventDefault
-      on:paste|preventDefault
-      on:cut|preventDefault
-    />
-    <button
-      type="button"
-      class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
-      on:click={() => (showPassword = !showPassword)}
-    >
-      {#if showPassword}
-        👁️
-      {:else}
-        👁️‍🗨️
-      {/if}
-    </button>
-    {#if errors.password}
-      <p class="text-red-500 text-sm">{errors.password}</p>
-    {/if}
-    <p class="text-sm text-gray-600 mt-2">
-      <button class="text-blue-500 hover:underline" on:click={() => {activeModal.set('forgotPassword')}}>
-        Passwort vergessen?
-      </button>
-    </p>
-  </div>
-
-  {#if formType !== 'login'}
-    <div class="mb-4 relative">
-      <label
-        for="confirmPassword"
-        class="block text-sm font-medium text-gray-700">Confirm Password</label
-      >
-      <input
-        type={showConfirmPassword ? 'text' : 'password'}
-        id="confirmPassword"
-        bind:value={userInfo.confirmPassword}
-        class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 pr-10"
-        required
-        on:copy|preventDefault
-        on:paste|preventDefault
-        on:cut|preventDefault
-      />
-      <button
-        type="button"
-        class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
-        on:click={() => (showConfirmPassword = !showConfirmPassword)}
-      >
-        {#if showConfirmPassword}
-          👁️
-        {:else}
-          👁️‍🗨️
-        {/if}
-      </button>
-      {#if errors.confirmPassword}
-        <p class="text-red-500 text-sm">{errors.confirmPassword}</p>
-      {/if}
-    </div>
-  {/if}
+  <PasswordInputs
+    bind:password={userInfo.password}
+    bind:confirmPassword={userInfo.confirmPassword}
+    {formType}
+    {errors}
+  />
 
   <div class="text-center mt-4">
     <button
