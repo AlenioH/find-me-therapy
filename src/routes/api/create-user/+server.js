@@ -34,8 +34,25 @@ export async function POST({ request, cookies }) {
 
     const { email, password, name, role } = fields;
 
-    const verificationToken = crypto.randomBytes(32).toString('hex');
+    //check if the email already exists
+    const existingUser = await prisma.users.findUnique({
+      where: { email },
+    });
 
+    if (existingUser) {
+      // If email already exists, return a generic error message
+      return new Response(
+        JSON.stringify({
+          message:
+            'Diese E-Mail-Adresse wird bereits verwendet. Bitte versuche, dich einzuloggen, oder verwende eine andere E-Mail-Adresse.',
+        }),
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
 
     let newUser;
     newUser = await prisma.users.create({
@@ -65,10 +82,12 @@ export async function POST({ request, cookies }) {
       secure: true,
     });
 
-
-
     const verificationLink = `http://localhost:5173/verify-email?token=${verificationToken}`;
-    await sendEmail(email, 'Verifiziere deine E-Mail-Adresse', `Klicke auf diesen Link, um deine E-Mail zu verifizieren: ${verificationLink}`);
+    await sendEmail(
+      email,
+      'Verifiziere deine E-Mail-Adresse',
+      `Klicke auf diesen Link, um deine E-Mail zu verifizieren: ${verificationLink}`
+    );
     return new Response(JSON.stringify(newUser), { status: 201 });
   } catch (error) {
     console.error('Error creating user:', error);
