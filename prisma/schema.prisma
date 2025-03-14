@@ -25,7 +25,7 @@ model users {
   therapist     therapists?
   isVerified        Boolean @default(false)
   verificationToken String? @unique
-  resetToken       String?  // Nullable: Exists only when requested
+  resetToken       String? @unique // Nullable: Exists only when requested
   resetTokenExpiry DateTime? // Nullable: Exists only when requested
 }
 
