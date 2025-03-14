@@ -1,5 +1,8 @@
 <script>
-  import PasswordInputs from "$lib/components/PasswordInputs.svelte";
+  import bcrypt from 'bcryptjs';
+  import { activeModal } from '$lib/stores';
+
+  import PasswordInputs from '$lib/components/PasswordInputs.svelte';
 
   export let data;
   let password = '';
@@ -12,20 +15,17 @@
     confirmPassword: '',
   };
 
-
   const validate = () => {
-  errors = {
-    password: validatePassword(password)
-      ? ''
-      : 'Password must be at least 8 characters long and contain 1 uppercase, 1 lowercase, and 1 special character',
-    confirmPassword:
-      password === confirmPassword
+    errors = {
+      password: validatePassword(password)
         ? ''
-        : 'Passwords do not match',
-  };
+        : 'Password must be at least 8 characters long and contain 1 uppercase, 1 lowercase, and 1 special character',
+      confirmPassword:
+        password === confirmPassword ? '' : 'Passwords do not match',
+    };
 
-  return Object.values(errors).every((error) => error === ''); // Form is valid if there are no errors
-};
+    return Object.values(errors).every((error) => error === ''); // Form is valid if there are no errors
+  };
 
   const validatePassword = (password) => {
     // password must be at least 8 characters long, with at least 1 uppercase letter, 1 lowercase letter, and 1 special character
@@ -35,7 +35,6 @@
   };
 
   const handleReset = async () => {
-
     if (!validate()) return;
 
     if (!data.token) {
@@ -48,11 +47,18 @@
       return;
     }
 
+    const hashPassword = async (password) => {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      return hashedPassword;
+    };
+
+    const hashedPassword = await hashPassword(password);
+
     try {
       const res = await fetch('/api/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: data.token, password }),
+        body: JSON.stringify({ token: data.token, password: hashedPassword }),
       });
 
       const responseData = await res.json();
@@ -61,7 +67,8 @@
         successMessage = responseData.message;
         errorMessage = '';
         setTimeout(() => {
-          window.location.href = '/login';
+          window.location.href = '/';
+          activeModal.set('login');
         }, 2000);
       } else {
         errorMessage = responseData.error || 'Fehler beim Zurücksetzen.';
@@ -77,11 +84,12 @@
     {#if data.error}
       <p class="text-red-500 text-center">{data.error}</p>
     {:else}
-      <h2 class="text-2xl font-semibold text-center mb-4">Passwort zurücksetzen</h2>
+      <h2 class="text-2xl font-semibold text-center mb-4">
+        Passwort zurücksetzen
+      </h2>
 
       <form on:submit|preventDefault={handleReset} class="space-y-4">
-        <PasswordInputs bind:password={password} bind:confirmPassword={confirmPassword} {errors} />
-
+        <PasswordInputs bind:password bind:confirmPassword {errors} />
 
         {#if errorMessage}
           <p class="text-red-500 text-sm">{errorMessage}</p>

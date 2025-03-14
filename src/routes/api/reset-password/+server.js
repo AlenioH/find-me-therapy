@@ -1,5 +1,4 @@
 import prisma from '$lib/prisma';
-import bcrypt from 'bcrypt';
 
 export async function POST({ request }) {
   try {
@@ -12,7 +11,6 @@ export async function POST({ request }) {
       );
     }
 
-    // Find the user with the token and ensure it hasn't expired
     const user = await prisma.users.findUnique({
       where: { resetToken: token, resetTokenExpiry: { gte: new Date() } },
     });
@@ -24,14 +22,10 @@ export async function POST({ request }) {
       );
     }
 
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Update the user's password and remove reset token
     await prisma.users.update({
       where: { id: user.id },
       data: {
-        password: hashedPassword,
+        passwordHash: password,
         resetToken: null,
         resetTokenExpiry: null,
       },
@@ -43,9 +37,8 @@ export async function POST({ request }) {
     );
   } catch (error) {
     console.error('Fehler beim Zurücksetzen des Passworts:', error);
-    return new Response(
-      JSON.stringify({ error: 'Interner Serverfehler.' }),
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: 'Interner Serverfehler.' }), {
+      status: 500,
+    });
   }
 }
